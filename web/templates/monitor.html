@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Monitor - Trading AI</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+        .control-panel {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        .control-panel input, .control-panel button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        .control-panel input {
+            border: 2px solid #ddd;
+            flex: 1;
+            min-width: 200px;
+        }
+        .control-panel button {
+            background: #3498db;
+            color: white;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .control-panel button:hover {
+            background: #2980b9;
+        }
+        .control-panel button.stop {
+            background: #e74c3c;
+        }
+        .control-panel button.stop:hover {
+            background: #c0392b;
+        }
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-left: 4px solid #3498db;
+        }
+        .card h3 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+        .alerts {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .alert {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border-left: 4px solid #f39c12;
+            background: #fef9e7;
+        }
+        .alert.high {
+            border-left-color: #e74c3c;
+            background: #fdf2f2;
+        }
+        .status {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .status.active {
+            background: #2ecc71;
+            color: white;
+        }
+        .status.inactive {
+            background: #95a5a6;
+            color: white;
+        }
+        .nav {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .nav a {
+            color: #3498db;
+            text-decoration: none;
+            margin: 0 15px;
+            font-weight: bold;
+        }
+        .nav a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="nav">
+            <a href="/">Home</a>
+            <a href="/stock">Stock Data</a>
+            <a href="/monitor">Monitor</a>
+        </div>
+        
+        <h1>📈 Real-Time Stock Monitor</h1>
+        
+        <div class="control-panel">
+            <input type="text" id="symbolInput" placeholder="Enter stock symbol (e.g., AAPL)" value="AAPL">
+            <button onclick="startMonitoring()">Start Monitoring</button>
+            <button class="stop" onclick="stopMonitoring()">Stop Monitoring</button>
+            <button onclick="runBacktest()">Run Backtest</button>
+        </div>
+        
+        <div class="dashboard">
+            <div class="card">
+                <h3>📊 Monitoring Status</h3>
+                <p>Status: <span class="status inactive" id="monitorStatus">Inactive</span></p>
+                <p>Symbol: <span id="currentSymbol">None</span></p>
+                <p>Last Update: <span id="lastUpdate">Never</span></p>
+            </div>
+            
+            <div class="card">
+                <h3>💰 Current Data</h3>
+                <p>Price: $<span id="currentPrice">--</span></p>
+                <p>Volume: <span id="currentVolume">--</span></p>
+                <p>Change: <span id="priceChange">--</span></p>
+            </div>
+            
+            <div class="card">
+                <h3>🎯 Trading Signals</h3>
+                <p>Signal: <span id="tradingSignal">None</span></p>
+                <p>Confidence: <span id="signalConfidence">--</span></p>
+                <p>Action: <span id="recommendedAction">Hold</span></p>
+            </div>
+        </div>
+        
+        <div class="alerts">
+            <h3>🚨 Active Alerts</h3>
+            <div id="alertsList">
+                {% if alerts %}
+                    {% for alert in alerts %}
+                    <div class="alert {{ alert.priority }}">
+                        <strong>{{ alert.timestamp }}</strong>: {{ alert.message }}
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p>No active alerts</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function startMonitoring() {
+            const symbol = document.getElementById('symbolInput').value.toUpperCase();
+            if (!symbol) {
+                alert('Please enter a stock symbol');
+                return;
+            }
+            
+            fetch(`/api/start_monitoring?symbol=${symbol}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        document.getElementById('monitorStatus').textContent = 'Active';
+                        document.getElementById('monitorStatus').className = 'status active';
+                        document.getElementById('currentSymbol').textContent = symbol;
+                        document.getElementById('lastUpdate').textContent = new Date().toLocaleString();
+                        alert(data.message);
+                    } else {
+                        alert('Error: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Failed to start monitoring');
+                });
+        }
+        
+        function stopMonitoring() {
+            fetch('/api/stop_monitoring')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        document.getElementById('monitorStatus').textContent = 'Inactive';
+                        document.getElementById('monitorStatus').className = 'status inactive';
+                        document.getElementById('currentSymbol').textContent = 'None';
+                        alert(data.message);
+                    } else {
+                        alert('Error: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Failed to stop monitoring');
+                });
+        }
+        
+        function runBacktest() {
+            const symbol = document.getElementById('symbolInput').value.toUpperCase();
+            if (!symbol) {
+                alert('Please enter a stock symbol');
+                return;
+            }
+            
+            fetch(`/api/backtest?symbol=${symbol}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        const results = data.results;
+                        alert(`Backtest Results:\nFinal Portfolio Value: $${results.final_value}\nTotal Return: ${results.total_return}%\nTotal Trades: ${results.total_trades}`);
+                    } else {
+                        alert('Error: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Failed to run backtest');
+                });
+        }
+        
+        // Auto-refresh data every 30 seconds
+        setInterval(() => {
+            const status = document.getElementById('monitorStatus').textContent;
+            if (status === 'Active') {
+                document.getElementById('lastUpdate').textContent = new Date().toLocaleString();
+            }
+        }, 30000);
+    </script>
+</body>
+</html>

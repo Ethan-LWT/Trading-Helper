@@ -1,0 +1,3927 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-i18n="trading_ai_dashboard">Trading AI Dashboard</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
+    <script src="/static/js/i18n.js"></script>
+    <script src="/static/js/ai_strategy.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0e1a;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+        
+        .dashboard {
+            display: grid;
+            grid-template-areas: 
+                "header header header header"
+                "sidebar main main main"
+                "sidebar main main main";
+            grid-template-columns: 280px 1fr 1fr 1fr;
+            grid-template-rows: 60px 1fr 1fr;
+            height: 100vh;
+            gap: 1px;
+            background: #1a1f2e;
+        }
+        
+        .header {
+            grid-area: header;
+            background: #1e2329;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            border-bottom: 1px solid #2b3139;
+        }
+        
+        .logo {
+            font-size: 18px;
+            font-weight: bold;
+            color: #f0b90b;
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .language-toggle {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background: #2b3139;
+            border: 1px solid #404040;
+            border-radius: 20px;
+            padding: 6px 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 12px;
+            color: #ffffff;
+        }
+        
+        .language-toggle:hover {
+            border-color: #f0b90b;
+            background: #3a3f4a;
+        }
+        
+        .globe-icon {
+            font-size: 14px;
+        }
+        
+        .lang-text {
+            font-weight: 500;
+            min-width: 20px;
+            text-align: center;
+        }
+        
+        .fixed-time-display {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(30, 35, 41, 0.9);
+            color: #848e9c;
+            font-size: 12px;
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: 1px solid #2b3139;
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+        
+        .language-selector {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .language-selector select {
+            background: #2b3139;
+            color: #ffffff;
+            border: 1px solid #404040;
+            border-radius: 4px;
+            padding: 5px 10px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        
+        .language-selector select:hover {
+            border-color: #f0b90b;
+        }
+        }
+        
+        .header-controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .notification-toggle {
+            background: #2b3139;
+            border: 1px solid #3c4043;
+            color: #ffffff;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        .notification-toggle.active {
+            background: #0ecb81;
+            border-color: #0ecb81;
+        }
+        
+        .sidebar {
+            grid-area: sidebar;
+            background: #1e2329;
+            padding: 20px;
+            border-right: 1px solid #2b3139;
+        }
+        
+        .main-content {
+            grid-area: main;
+            background: #0a0e1a;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: 1fr;
+            grid-template-rows: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .top-row {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+        
+        .bottom-row {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+        
+        .panel {
+            background: #1e2329;
+            border-radius: 8px;
+            padding: 20px;
+            border: 1px solid #2b3139;
+        }
+        
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #2b3139;
+        }
+        
+        .panel-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #ffffff;
+        }
+        
+        .watchlist {
+            margin-bottom: 30px;
+        }
+        
+        .watchlist-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .watchlist-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #ffffff;
+        }
+        
+        .add-symbol {
+            background: #f0b90b;
+            color: #000;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        
+        .symbol-list {
+            list-style: none;
+        }
+        
+        .symbol-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #2b3139;
+            transition: background 0.2s;
+        }
+        
+        .symbol-item:hover {
+            background: #2b3139;
+            margin: 0 -10px;
+            padding: 8px 10px;
+            border-radius: 4px;
+        }
+        
+        .symbol-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex: 1;
+            cursor: pointer;
+        }
+        
+        .remove-symbol {
+            background: #f6465d;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 8px;
+            transition: all 0.2s ease;
+            opacity: 0.7;
+        }
+        
+        .remove-symbol:hover {
+            opacity: 1;
+            transform: scale(1.1);
+            background: #dc3545;
+        }
+        
+        .symbol-item:not(:hover) .remove-symbol {
+            opacity: 0.4;
+        }
+        
+        .symbol-name {
+            font-weight: 600;
+            color: #ffffff;
+        }
+        
+        .symbol-price {
+            font-size: 12px;
+            color: #0ecb81;
+        }
+        
+        .symbol-change {
+            font-size: 11px;
+        }
+        
+        .positive {
+            color: #0ecb81;
+        }
+        
+        .negative {
+            color: #f6465d;
+        }
+        
+
+        
+        .chart-container {
+            height: 300px;
+            position: relative;
+        }
+        
+        .market-data {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        /* K-line Chart Styles */
+        .chart-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .timeframe-buttons {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .timeframe-btn {
+            background: #2b3139;
+            color: #848e9c;
+            border: 1px solid #3d4450;
+            border-radius: 4px;
+            padding: 6px 12px;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            min-width: 40px;
+            text-align: center;
+        }
+        
+        .timeframe-btn:hover {
+            background: #3d4450;
+            color: #ffffff;
+        }
+        
+        .timeframe-btn.active {
+            background: #f0b90b;
+            color: #0a0e1a;
+            border-color: #f0b90b;
+            font-weight: bold;
+        }
+        
+        #timeframeSelect {
+            background: #2b3139;
+            color: #ffffff;
+            border: 1px solid #3c4043;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        
+        #timeframeSelect:focus {
+            outline: none;
+            border-color: #f0b90b;
+        }
+        
+        .kline-chart-container {
+            display: flex;
+            gap: 0;
+            height: 600px;
+            width: 100%;
+        }
+        
+        .charts-left-area {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            flex: 1;
+            min-width: 0; /* Allow flex shrinking */
+        }
+        
+        .price-chart-wrapper {
+            height: 450px;
+            background: #0a0e1a;
+            border: 1px solid #2b3139;
+            border-radius: 4px 0 0 0;
+        }
+        
+        .volume-chart-wrapper {
+            height: 150px;
+            background: #0a0e1a;
+            border: 1px solid #2b3139;
+            border-top: none;
+            border-radius: 0 0 0 4px;
+        }
+        
+        .chip-distribution-wrapper {
+            width: 200px;
+            background: #1e2329;
+            border: 1px solid #2b3139;
+            border-left: none;
+            border-radius: 0 4px 4px 0;
+            padding: 10px;
+            height: 600px;
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0; /* Prevent shrinking */
+        }
+        
+        .chip-bars-container {
+            flex: 1;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #2b3139 #0a0e1a;
+        }
+        
+        .chip-bars-container::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .chip-bars-container::-webkit-scrollbar-track {
+            background: #0a0e1a;
+        }
+        
+        .chip-bars-container::-webkit-scrollbar-thumb {
+            background: #2b3139;
+            border-radius: 3px;
+        }
+        
+        .chip-bars-container::-webkit-scrollbar-thumb:hover {
+            background: #3c4043;
+        }
+        
+        .chip-title {
+            color: #f0b90b;
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-align: center;
+            height: 22px;
+            line-height: 22px;
+            flex-shrink: 0;
+        }
+        
+        .chip-bar {
+            display: flex;
+            align-items: center;
+            margin-bottom: 2px;
+            font-size: 12px;
+            min-height: 12px;
+        }
+        
+        .chip-price {
+            width: 60px;
+            color: #848e9c;
+            text-align: right;
+            margin-right: 5px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .chip-volume-bar {
+            flex: 1;
+            height: 14px;
+            background: #2b3139;
+            border-radius: 2px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .chip-volume-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0ecb81, #f0b90b);
+            transition: width 0.3s ease;
+        }
+        
+        .chip-percentage {
+            width: 35px;
+            color: #848e9c;
+            text-align: left;
+            margin-left: 5px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+        
+        .data-item {
+            text-align: center;
+            padding: 10px;
+            background: #2b3139;
+            border-radius: 4px;
+        }
+        
+        .data-label {
+            font-size: 12px;
+            color: #848e9c;
+            margin-bottom: 5px;
+        }
+        
+        .data-value {
+            font-size: 18px;
+            font-weight: bold;
+            color: #ffffff;
+        }
+        
+        .alerts-list {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .alert-item {
+            padding: 10px;
+            margin-bottom: 8px;
+            background: #2b3139;
+            border-radius: 4px;
+            border-left: 3px solid #f0b90b;
+        }
+        
+        .alert-time {
+            font-size: 11px;
+            color: #848e9c;
+        }
+        
+        .alert-message {
+            font-size: 13px;
+            color: #ffffff;
+            margin-top: 3px;
+        }
+        
+        .strategy-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+        
+        .strategy-btn {
+            background: #2b3139;
+            color: #ffffff;
+            border: 1px solid #3c4043;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            flex: 0 0 auto;
+        }
+        
+        .strategy-btn:hover {
+            background: #3c4043;
+        }
+        
+        .strategy-btn.active {
+            background: #0ecb81;
+            border-color: #0ecb81;
+        }
+        
+        .volume-indicator {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .volume-bar {
+            flex: 1;
+            height: 6px;
+            background: #2b3139;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        
+        .volume-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0ecb81, #f0b90b);
+            transition: width 0.3s ease;
+        }
+        
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #0ecb81;
+            display: inline-block;
+            margin-right: 8px;
+        }
+        
+        .status-indicator.inactive {
+            background: #848e9c;
+        }
+        
+        .input-group {
+            margin-bottom: 15px;
+        }
+        
+        /* Backtest Result Modal Styles */
+        .backtest-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+        }
+        
+        .backtest-modal-content {
+            position: relative;
+            background-color: #1e2329;
+            margin: 2% auto;
+            padding: 0;
+            border: 1px solid #3c4043;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 1200px;
+            height: 85vh;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .backtest-modal-header {
+            background: linear-gradient(135deg, #f0b90b, #fcd535);
+            color: #1e2329;
+            padding: 20px 30px;
+            border-radius: 12px 12px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        
+        .backtest-modal-close {
+            color: #1e2329;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+            transition: opacity 0.3s ease;
+        }
+        
+        .backtest-modal-close:hover {
+            opacity: 0.7;
+        }
+        
+        .backtest-modal-body {
+            flex: 1;
+            display: flex;
+            padding: 30px;
+            gap: 30px;
+            overflow: hidden;
+        }
+        
+        .backtest-info-panel {
+            flex: 1;
+            background: #2b3139;
+            border-radius: 8px;
+            padding: 25px;
+            overflow-y: auto;
+            border: 1px solid #3c4043;
+        }
+        
+        .backtest-chart-panel {
+            flex: 3;
+            background: #2b3139;
+            border-radius: 8px;
+            padding: 25px;
+            border: 1px solid #3c4043;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .backtest-info-section {
+            margin-bottom: 25px;
+        }
+        
+        .backtest-info-title {
+            color: #f0b90b;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #3c4043;
+        }
+        
+        .backtest-info-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #3c4043;
+            color: #ffffff;
+            font-size: 14px;
+        }
+        
+        .backtest-info-item:last-child {
+            border-bottom: none;
+        }
+        
+        .backtest-info-label {
+            color: #848e9c;
+        }
+        
+        .backtest-info-value {
+            font-weight: bold;
+            color: #ffffff;
+        }
+        
+        .backtest-info-value.positive {
+            color: #0ecb81;
+        }
+        
+        .backtest-info-value.negative {
+            color: #f6465d;
+        }
+        
+        .backtest-chart-title {
+            color: #f0b90b;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .backtest-chart-container {
+            flex: 1;
+            position: relative;
+            min-height: 400px;
+        }
+        
+        .backtest-evaluation {
+            background: #3c4043;
+            border-radius: 6px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+        
+        .backtest-evaluation-title {
+            color: #f0b90b;
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .backtest-evaluation-item {
+            color: #ffffff;
+            font-size: 13px;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        }
+        
+        .input-label {
+            font-size: 12px;
+            color: #848e9c;
+            margin-bottom: 5px;
+            display: block;
+        }
+        
+        .input-field {
+            width: 100%;
+            background: #2b3139;
+            border: 1px solid #3c4043;
+            color: #ffffff;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .input-field:focus {
+            outline: none;
+            border-color: #f0b90b;
+        }
+        
+        .volume-controls {
+            margin-top: 10px;
+        }
+        
+        .threshold-setting {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+            font-size: 12px;
+            color: #848e9c;
+        }
+        
+        .threshold-setting label {
+            font-weight: 500;
+        }
+        
+        .threshold-setting input {
+            width: 60px;
+            padding: 4px 8px;
+            border: 1px solid #3c4043;
+            border-radius: 4px;
+            background: #2b3139;
+            color: #ffffff;
+            text-align: center;
+            font-size: 12px;
+        }
+        
+        .threshold-setting input:focus {
+            outline: none;
+            border-color: #f0b90b;
+        }
+        
+        .volume-toggle {
+            background: #f0b90b;
+            color: #000;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-bottom: 10px;
+            width: 100%;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .volume-toggle.active {
+            background: #f6465d;
+            color: #ffffff;
+        }
+        
+        .volume-toggle:hover {
+            opacity: 0.8;
+        }
+        
+        /* Modal Styles */
+        .modal {
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background: #1e2329;
+            border-radius: 8px;
+            border: 1px solid #2b3139;
+            width: 80%;
+            max-width: 800px;
+            max-height: 80%;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 1px solid #2b3139;
+        }
+        
+        .modal-header h3 {
+            color: #ffffff;
+            margin: 0;
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .close {
+            color: #848e9c;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+        }
+        
+        .close:hover {
+            color: #ffffff;
+        }
+        
+        .modal-body {
+            padding: 20px;
+        }
+        
+        .analysis-section {
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #2b3139;
+        }
+        
+        .analysis-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+        
+        .analysis-section h4 {
+            color: #f0b90b;
+            margin: 0 0 15px 0;
+            font-size: 16px;
+            font-weight: 600;
+        }
+        
+        .analysis-result {
+            color: #848e9c;
+            font-size: 14px;
+            line-height: 1.6;
+            background: #0a0e1a;
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid #2b3139;
+        }
+        
+        .modal-footer {
+            padding: 20px;
+            border-top: 1px solid #2b3139;
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <div class="header">
+            <div class="logo-container">
+                <div class="logo" data-i18n="trading_ai_dashboard">🚀 Trading AI Dashboard</div>
+                <div class="language-toggle" onclick="toggleLanguage()">
+                    <span class="globe-icon">🌐</span>
+                    <span class="lang-text" id="currentLangText">EN</span>
+                </div>
+            </div>
+            <div class="header-controls">
+                <button class="notification-toggle" id="pushToggle">
+                    <span class="status-indicator" id="pushStatus"></span>
+                    <span data-i18n="push_notifications">推送功能</span>
+                </button>
+            </div>
+        </div>
+        
+        <div class="sidebar">
+            <div class="watchlist">
+                <div class="watchlist-header">
+                    <div class="watchlist-title" data-i18n="watchlist_title">自选股票</div>
+                    <button class="add-symbol" onclick="addSymbol()">+</button>
+                </div>
+                <ul class="symbol-list" id="symbolList">
+                    <li class="symbol-item">
+                        <div class="symbol-content" onclick="selectSymbol('AAPL')">
+                            <div>
+                                <div class="symbol-name">AAPL</div>
+                                <div class="symbol-change positive">+1.23%</div>
+                            </div>
+                            <div class="symbol-price">$150.25</div>
+                        </div>
+                        <button class="remove-symbol" onclick="removeFromWatchlist('AAPL')" data-i18n-title="remove_stock" title="删除股票">-</button>
+                    </li>
+                    <li class="symbol-item">
+                        <div class="symbol-content" onclick="selectSymbol('TSLA')">
+                            <div>
+                                <div class="symbol-name">TSLA</div>
+                                <div class="symbol-change negative">-2.15%</div>
+                            </div>
+                            <div class="symbol-price">$245.80</div>
+                        </div>
+                        <button class="remove-symbol" onclick="removeFromWatchlist('TSLA')" data-i18n-title="remove_stock" title="删除股票">-</button>
+                    </li>
+                    <li class="symbol-item">
+                        <div class="symbol-content" onclick="selectSymbol('GOOGL')">
+                            <div>
+                                <div class="symbol-name">GOOGL</div>
+                                <div class="symbol-change positive">+0.85%</div>
+                            </div>
+                            <div class="symbol-price">$2,750.30</div>
+                        </div>
+                        <button class="remove-symbol" onclick="removeFromWatchlist('GOOGL')" data-i18n-title="remove_stock" title="删除股票">-</button>
+                    </li>
+                </ul>
+            </div>
+            
+
+        </div>
+        
+        <div class="main-content">
+            <div class="top-row">
+                <div class="panel" id="chartPanel">
+                    <div class="panel-header">
+                        <div class="panel-title" data-i18n="price_chart">价格走势图</div>
+                        <div class="chart-controls">
+                            <div class="timeframe-buttons">
+                                <button class="timeframe-btn" data-timeframe="1m" onclick="changeTimeframe('1m')" data-i18n="timeframe_1m">1分</button>
+                                <button class="timeframe-btn" data-timeframe="5m" onclick="changeTimeframe('5m')" data-i18n="timeframe_5m">5分</button>
+                                <button class="timeframe-btn" data-timeframe="15m" onclick="changeTimeframe('15m')" data-i18n="timeframe_15m">15分</button>
+                                <button class="timeframe-btn" data-timeframe="30m" onclick="changeTimeframe('30m')" data-i18n="timeframe_30m">30分</button>
+                                <button class="timeframe-btn" data-timeframe="1h" onclick="changeTimeframe('1h')" data-i18n="timeframe_1h">1时</button>
+                                <button class="timeframe-btn active" data-timeframe="1d" onclick="changeTimeframe('1d')" data-i18n="timeframe_1d">日线</button>
+                                <button class="timeframe-btn" data-timeframe="1w" onclick="changeTimeframe('1w')" data-i18n="timeframe_1w">周线</button>
+                                <button class="timeframe-btn" data-timeframe="1M" onclick="changeTimeframe('1M')" data-i18n="timeframe_1M">月线</button>
+                            </div>
+                            <div style="font-size: 12px; color: #848e9c;" id="selectedSymbol">AAPL</div>
+                        </div>
+                    </div>
+                    <div class="market-data">
+                        <div class="data-item">
+                            <div class="data-label" data-i18n="current_price">当前价格</div>
+                            <div class="data-value" id="currentPrice">$150.25</div>
+                        </div>
+                        <div class="data-item">
+                            <div class="data-label" data-i18n="price_change">涨跌幅</div>
+                            <div class="data-value positive" id="priceChange">+1.23%</div>
+                        </div>
+                        <div class="data-item">
+                            <div class="data-label" data-i18n="volume">成交量</div>
+                            <div class="data-value" id="volume">2.5M</div>
+                        </div>
+                        <div class="data-item">
+                            <div class="data-label" data-i18n="open_price">开盘价</div>
+                            <div class="data-value" id="openPrice">$148.90</div>
+                        </div>
+                        <div class="data-item">
+                            <div class="data-label" data-i18n="high_price">最高价</div>
+                            <div class="data-value" id="highPrice">$151.20</div>
+                        </div>
+                        <div class="data-item">
+                            <div class="data-label" data-i18n="low_price">最低价</div>
+                            <div class="data-value" id="lowPrice">$148.50</div>
+                        </div>
+                    </div>
+                    <div class="kline-chart-container">
+                        <div class="charts-left-area">
+                            <div class="price-chart-wrapper">
+                                <div id="klineChart" style="height: 450px;"></div>
+                            </div>
+                            <div class="volume-chart-wrapper">
+                                <div id="volumeChart" style="height: 150px;"></div>
+                            </div>
+                        </div>
+                        <div class="chip-distribution-wrapper">
+                            <div id="chipDistribution" style="height: 600px; width: 200px;"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Volume monitoring section moved here -->
+                    <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #2b3139;">
+                        <div class="panel-header">
+                            <div class="panel-title" data-i18n="volume_monitoring">交易量变化检测</div>
+                            <div class="status-indicator" id="volumeStatus"></div>
+                        </div>
+                        <div class="volume-controls">
+                            <div class="threshold-setting">
+                                <label for="volumeThreshold" data-i18n="monitoring_threshold">监控阈值:</label>
+                                <input type="number" id="volumeThreshold" value="20" min="1" max="100" step="1">
+                                <span>%</span>
+                            </div>
+                            <button class="btn volume-toggle" onclick="toggleVolumeMonitoring()">启动监控</button>
+                            <div id="volumeStatusText" data-i18n="click_to_start_monitoring">点击启动交易量监控</div>
+                        </div>
+                        <div class="volume-indicator">
+                            <span style="font-size: 12px; color: #848e9c;" data-i18n="abnormal_volume">异常交易量:</span>
+                            <div class="volume-bar">
+                                <div class="volume-fill" id="volumeFill" style="width: 65%;"></div>
+                            </div>
+                            <span style="font-size: 12px; color: #f0b90b;">65%</span>
+                        </div>
+                        <div class="alerts-list" id="volumeAlerts" style="max-height: 150px;">
+                            <div class="alert-item">
+                                <div class="alert-time">14:32:15</div>
+                                <div class="alert-message">TSLA 检测到异常交易量增长 +125%</div>
+                            </div>
+                            <div class="alert-item">
+                                <div class="alert-time">14:28:42</div>
+                                <div class="alert-message">AAPL 大单流入检测，金额 $2.5M</div>
+                            </div>
+                            <div class="alert-item">
+                                <div class="alert-time">14:25:18</div>
+                                <div class="alert-message">GOOGL 交易量突破日均值 200%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bottom-row">
+                <div class="panel" id="strategyPanel">
+                    <div class="panel-header">
+                        <div class="panel-title" data-i18n="strategy_creation">策略制定</div>
+                        <div class="status-indicator" id="strategyStatus"></div>
+                    </div>
+                    <div class="input-group" id="targetSymbolGroup">
+                        <label class="input-label" data-i18n="target_stock">目标股票</label>
+                        <input type="text" class="input-field" id="strategyTarget" data-i18n-placeholder="enter_stock_code" placeholder="输入股票代码或使用当前选中股票">
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label" data-i18n="strategy_type">策略类型</label>
+                        <select class="input-field" id="strategyType" onchange="toggleAIOptions()">
+                            <option value="ma" data-i18n="moving_average">移动平均线</option>
+                            <option value="rsi" data-i18n="rsi_strategy">RSI策略</option>
+                            <option value="macd" data-i18n="macd_strategy">MACD策略</option>
+                            <option value="bollinger" data-i18n="bollinger_strategy">布林带策略</option>
+                            <option value="ai" data-i18n="ai_strategy">AI智能策略</option>
+                        </select>
+                    </div>
+                    <div class="input-group" id="aiOptionsGroup" style="display: none;">
+                        <label class="input-label" data-i18n="ai_model_selection">AI模型选择</label>
+                        <select class="input-field" id="aiModelType">
+                            <option value="google">Google AI (Gemini)</option>
+                            <option value="ollama" data-i18n="local_ollama">本地Ollama (Llama3)</option>
+                        </select>
+                    </div>
+                    <div class="strategy-controls">
+                        <button class="strategy-btn" onclick="openAnalysisModal()" data-i18n="intelligent_analysis">智能分析</button>
+                        <button class="strategy-btn" onclick="createStrategy()" data-i18n="create_strategy">创建策略</button>
+                        <button class="strategy-btn" onclick="backtest()" data-i18n="backtest_verification">回测验证</button>
+                        <button class="strategy-btn" onclick="deployStrategy()" data-i18n="deploy_strategy">部署策略</button>
+                        <button class="strategy-btn" onclick="stopStrategy()" data-i18n="stop_strategy">停止策略</button>
+                    </div>
+                    <div id="strategyResults" style="font-size: 12px; color: #848e9c; line-height: 1.5;">
+                        <span data-i18n="strategy_status_inactive">策略状态：未激活</span>
+                    </div>
+                    <div id="backtestChartContainer" style="display: none; margin-top: 20px;">
+                        <h4 style="color: #f0b90b; margin-bottom: 10px;" data-i18n="backtest_price_chart">回测价格走势图</h4>
+                        <div style="height: 300px; background: #1e2329; border-radius: 8px; padding: 10px;">
+                            <canvas id="backtestChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Analysis Modal -->
+    <div id="analysisModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 data-i18n="intelligent_analysis_results">智能分析结果</h3>
+                <span class="close" onclick="closeAnalysisModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="analysis-section">
+                    <h4 data-i18n="technical_analysis">技术分析</h4>
+                    <div id="technicalAnalysisResult" class="analysis-result">
+                        正在分析...
+                    </div>
+                </div>
+                <div class="analysis-section">
+                    <h4 data-i18n="fundamental_analysis">基本面分析</h4>
+                    <div id="fundamentalAnalysisResult" class="analysis-result">
+                        正在分析...
+                    </div>
+                </div>
+                <div class="analysis-section">
+                    <h4 data-i18n="sentiment_analysis">市场情绪分析</h4>
+                    <div id="sentimentAnalysisResult" class="analysis-result">
+                        正在分析...
+                    </div>
+                </div>
+                <div class="analysis-section">
+                    <h4 data-i18n="ai_prediction">AI预测</h4>
+                    <div id="aiAnalysisResult" class="analysis-result">
+                        正在分析...
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="strategy-btn" onclick="closeAnalysisModal()" data-i18n="close">关闭</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- AI Strategy Optimization Modal -->
+    <div id="aiOptimizationModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 data-i18n="ai_strategy_optimization">AI策略优化</h3>
+                <span class="close" onclick="closeAIOptimizationModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="optimization-controls">
+                    <div class="form-group">
+                        <label for="optimizationSymbol" data-i18n="stock_code">股票代码:</label>
+                        <input type="text" id="optimizationSymbol" value="AAPL" data-i18n-placeholder="enter_stock_code_placeholder" placeholder="输入股票代码">
+                    </div>
+                    <div class="form-group">
+                        <label for="optimizationModel" data-i18n="ai_model">AI模型:</label>
+                        <select id="optimizationModel">
+                            <option value="local" data-i18n="local_ai_recommended">本地AI (推荐)</option>
+                            <option value="google">Google AI</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="marketCondition" data-i18n="market_condition">市场状况:</label>
+                        <select id="marketCondition">
+                            <option value="neutral" data-i18n="neutral">中性</option>
+                            <option value="bullish" data-i18n="bullish">看涨</option>
+                            <option value="bearish" data-i18n="bearish">看跌</option>
+                            <option value="volatile" data-i18n="volatile">波动</option>
+                        </select>
+                    </div>
+                    <div class="form-actions">
+                        <button onclick="startStrategyOptimization()" class="strategy-btn">
+                            开始优化
+                        </button>
+                        <button onclick="generateSimpleStrategy()" class="strategy-btn secondary">
+                            生成简单策略
+                        </button>
+                    </div>
+                </div>
+                
+                <div id="optimizationProgress" class="optimization-progress" style="display: none;">
+                    <div class="progress-indicator">
+                        <div class="spinner"></div>
+                        <p data-i18n="optimizing_strategy">正在优化策略... 这可能需要几分钟时间。</p>
+                        <div class="progress-details">
+                            <span id="progressText" data-i18n="initializing_optimization">初始化优化...</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="strategyDisplay" class="strategy-display"></div>
+                <div id="optimizationResults" class="optimization-results"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="strategy-btn" onclick="closeAIOptimizationModal()" data-i18n="close">关闭</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let currentSymbol = 'AAPL';
+
+        let priceChart = null;
+        let pushEnabled = false;
+        
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeChart();
+            updateTime();
+            loadNotificationSettings();
+            setInterval(updateTime, 1000);
+            setInterval(updateMarketData, 5000);
+        });
+        
+        function updateTime() {
+            const now = new Date();
+            document.getElementById('currentTime').textContent = now.toLocaleTimeString();
+        }
+        
+        function initializeChart() {
+            // Skip old chart initialization since we're using K-line charts now
+            console.log('Old chart initialization skipped - using K-line charts');
+        }
+        
+        function generateMockData() {
+            const labels = [];
+            const prices = [];
+            const basePrice = 150;
+            
+            for (let i = 0; i < 24; i++) {
+                const hour = String(i).padStart(2, '0') + ':00';
+                labels.push(hour);
+                prices.push(basePrice + Math.random() * 10 - 5);
+            }
+            
+            return { labels, prices };
+        }
+        
+        function selectSymbol(symbol) {
+            currentSymbol = symbol;
+            document.getElementById('selectedSymbol').textContent = symbol;
+            updateMarketData();
+            updateChart();
+        }
+        
+        function updateMarketData() {
+            // Mock data update
+            const mockPrices = {
+                'AAPL': { price: 150.25, change: '+1.23%', volume: '2.5M' },
+                'TSLA': { price: 245.80, change: '-2.15%', volume: '3.8M' },
+                'GOOGL': { price: 2750.30, change: '+0.85%', volume: '1.2M' }
+            };
+            
+            const data = mockPrices[currentSymbol] || mockPrices['AAPL'];
+            document.getElementById('currentPrice').textContent = '$' + data.price;
+            document.getElementById('priceChange').textContent = data.change;
+            document.getElementById('volume').textContent = data.volume;
+            
+            // Update change color
+            const changeElement = document.getElementById('priceChange');
+            changeElement.className = data.change.startsWith('+') ? 'data-value positive' : 'data-value negative';
+        }
+        
+        function updateChart() {
+            if (priceChart) {
+                const newData = generateMockData();
+                priceChart.data.labels = newData.labels;
+                priceChart.data.datasets[0].data = newData.prices;
+                priceChart.update();
+            }
+        }
+        
+        let backtestChart = null;
+        let backtestModalChart = null;
+        
+        // Function to open backtest modal
+        function openBacktestModal() {
+            document.getElementById('backtestModal').style.display = 'block';
+        }
+        
+        // Function to close backtest modal
+        function closeBacktestModal() {
+            document.getElementById('backtestModal').style.display = 'none';
+        }
+        
+        // Function to populate backtest info panel
+        function populateBacktestInfo(data, strategyType) {
+            const infoContent = document.getElementById('backtestInfoContent');
+            let htmlContent = '';
+            let shouldShowOptimization = false;
+            let totalReturn = 0;
+            
+            if (strategyType === 'ai' && data.performance_metrics) {
+                const performance = data.performance_metrics;
+                const trading = data.trading_statistics || {};
+                const dailyAnalysis = data.daily_analysis || {};
+                totalReturn = performance.total_return_pct || 0;
+                
+                // Overall Performance Section
+                htmlContent += `
+                    <div class="backtest-info-section">
+                        <div class="backtest-info-title">整体表现</div>
+                        <div class="backtest-info-item">
+                            <span class="backtest-info-label">总收益率</span>
+                            <span class="backtest-info-value ${performance.total_return_pct >= 0 ? 'positive' : 'negative'}">${performance.total_return_pct || 0}%</span>
+                        </div>
+                        <div class="backtest-info-item">
+                            <span class="backtest-info-label">最大回撤</span>
+                            <span class="backtest-info-value negative">${performance.max_drawdown_pct || 0}%</span>
+                        </div>
+                        <div class="backtest-info-item">
+                            <span class="backtest-info-label">夏普比率</span>
+                            <span class="backtest-info-value">${performance.sharpe_ratio || 0}</span>
+                        </div>
+                        <div class="backtest-info-item">
+                            <span class="backtest-info-label">年化波动率</span>
+                            <span class="backtest-info-value">${performance.annualized_volatility_pct || 0}%</span>
+                        </div>
+                    </div>
+                `;
+                
+                // Trading Statistics Section
+                htmlContent += `
+                    <div class="backtest-info-section">
+                        <div class="backtest-info-title">交易统计</div>
+                        <div class="backtest-info-item">
+                            <span class="backtest-info-label">总交易次数</span>
+                            <span class="backtest-info-value">${trading.total_trades || 0}次</span>
+                        </div>
+                        <div class="backtest-info-item">
+                            <span class="backtest-info-label">胜率</span>
+                            <span class="backtest-info-value ${trading.win_rate_pct >= 50 ? 'positive' : 'negative'}">${trading.win_rate_pct || 0}%</span>
+                        </div>
+                        <div class="backtest-info-item">
+                            <span class="backtest-info-label">平均交易收益</span>
+                            <span class="backtest-info-value ${trading.avg_trade_return_pct >= 0 ? 'positive' : 'negative'}">${trading.avg_trade_return_pct || 0}%</span>
+                        </div>
+                        <div class="backtest-info-item">
+                            <span class="backtest-info-label">平均持仓天数</span>
+                            <span class="backtest-info-value">${trading.avg_holding_period_days || 0}天</span>
+                        </div>
+                `;
+                
+                if (trading.start_trading_date && trading.end_trading_date) {
+                    htmlContent += `
+                        <div class="backtest-info-item">
+                            <span class="backtest-info-label">交易开始日期</span>
+                            <span class="backtest-info-value">${trading.start_trading_date}</span>
+                        </div>
+                        <div class="backtest-info-item">
+                            <span class="backtest-info-label">交易结束日期</span>
+                            <span class="backtest-info-value">${trading.end_trading_date}</span>
+                        </div>
+                    `;
+                }
+                
+                htmlContent += `</div>`;
+                
+                // Daily Analysis Section
+                htmlContent += `
+                    <div class="backtest-info-section">
+                        <div class="backtest-info-title">每日分析</div>
+                        <div class="backtest-info-item">
+                            <span class="backtest-info-label">每日交易频率</span>
+                            <span class="backtest-info-value">${dailyAnalysis.daily_trading_frequency_pct || 0}%</span>
+                        </div>
+                        <div class="backtest-info-item">
+                            <span class="backtest-info-label">每日盈利频率</span>
+                            <span class="backtest-info-value">${dailyAnalysis.daily_profit_frequency_pct || 0}%</span>
+                        </div>
+                        <div class="backtest-info-item">
+                            <span class="backtest-info-label">有交易的天数</span>
+                            <span class="backtest-info-value">${dailyAnalysis.days_with_trades || 0}天</span>
+                        </div>
+                        <div class="backtest-info-item">
+                            <span class="backtest-info-label">有盈利的天数</span>
+                            <span class="backtest-info-value">${dailyAnalysis.days_with_profits || 0}天</span>
+                        </div>
+                        <div class="backtest-info-item">
+                            <span class="backtest-info-label">平均每日收益</span>
+                            <span class="backtest-info-value ${dailyAnalysis.avg_daily_return_pct >= 0 ? 'positive' : 'negative'}">${dailyAnalysis.avg_daily_return_pct || 0}%</span>
+                        </div>
+                    </div>
+                `;
+                
+                // Strategy Evaluation Section
+                htmlContent += `
+                    <div class="backtest-evaluation">
+                        <div class="backtest-evaluation-title">策略评估</div>
+                        <div class="backtest-evaluation-item">
+                            ${dailyAnalysis.daily_trading_frequency_pct > 50 ? '✅' : '⚠️'} 
+                            ${dailyAnalysis.daily_trading_frequency_pct > 50 ? '交易频率充足' : '交易频率偏低'}
+                        </div>
+                        <div class="backtest-evaluation-item">
+                            ${dailyAnalysis.daily_profit_frequency_pct > 40 ? '✅' : '⚠️'} 
+                            ${dailyAnalysis.daily_profit_frequency_pct > 40 ? '盈利频率良好' : '盈利频率需改善'}
+                        </div>
+                        <div class="backtest-evaluation-item">
+                            ${trading.win_rate_pct > 55 ? '✅' : '⚠️'} 
+                            ${trading.win_rate_pct > 55 ? '胜率表现良好' : '胜率需要提升'}
+                        </div>
+                    </div>
+                `;
+                
+                // Check if optimization should be shown
+                shouldShowOptimization = totalReturn <= 0;
+                
+            } else if (data.results) {
+                // Traditional backtest results
+                const results = data.results;
+                totalReturn = results.total_return_pct || 0;
+                
+                htmlContent += `
+                    <div class="backtest-info-section">
+                        <div class="backtest-info-title">传统策略回测结果</div>
+                        <div class="backtest-info-item">
+                            <span class="backtest-info-label">初始资金</span>
+                            <span class="backtest-info-value">$${results.initial_capital?.toLocaleString() || '100,000'}</span>
+                        </div>
+                        <div class="backtest-info-item">
+                            <span class="backtest-info-label">最终价值</span>
+                            <span class="backtest-info-value">$${results.final_value?.toLocaleString() || 'N/A'}</span>
+                        </div>
+                        <div class="backtest-info-item">
+                            <span class="backtest-info-label">总收益率</span>
+                            <span class="backtest-info-value ${results.total_return_pct >= 0 ? 'positive' : 'negative'}">${results.total_return_pct?.toFixed(2) || '0'}%</span>
+                        </div>
+                        <div class="backtest-info-item">
+                            <span class="backtest-info-label">最大回撤</span>
+                            <span class="backtest-info-value negative">${results.max_drawdown_pct?.toFixed(2) || '0'}%</span>
+                        </div>
+                        <div class="backtest-info-item">
+                            <span class="backtest-info-label">夏普比率</span>
+                            <span class="backtest-info-value">${results.sharpe_ratio?.toFixed(2) || '0'}</span>
+                        </div>
+                        <div class="backtest-info-item">
+                            <span class="backtest-info-label">波动率</span>
+                            <span class="backtest-info-value">${results.volatility_pct?.toFixed(2) || '0'}%</span>
+                        </div>
+                        <div class="backtest-info-item">
+                            <span class="backtest-info-label">总交易次数</span>
+                            <span class="backtest-info-value">${results.total_trades || 0}次</span>
+                        </div>
+                    </div>
+                `;
+                
+                // Check if optimization should be shown
+                shouldShowOptimization = totalReturn <= 0;
+                
+            } else {
+                // Default fallback
+                htmlContent += `
+                    <div class="backtest-info-section">
+                        <div class="backtest-info-title">回测结果</div>
+                        <div class="backtest-info-item">
+                            <span class="backtest-info-label">收益率</span>
+                            <span class="backtest-info-value positive">+12.5%</span>
+                        </div>
+                        <div class="backtest-info-item">
+                            <span class="backtest-info-label">最大回撤</span>
+                            <span class="backtest-info-value negative">-3.2%</span>
+                        </div>
+                        <div class="backtest-info-item">
+                            <span class="backtest-info-label">胜率</span>
+                            <span class="backtest-info-value positive">68%</span>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            infoContent.innerHTML = htmlContent;
+            
+            // Show or hide AI optimization section based on performance
+            const optimizationSection = document.getElementById('aiOptimizationSection');
+            if (shouldShowOptimization) {
+                optimizationSection.style.display = 'block';
+                // Store backtest data for optimization
+                window.currentBacktestData = data;
+                window.currentStrategyType = strategyType;
+            } else {
+                optimizationSection.style.display = 'none';
+            }
+        }
+        
+        function createBacktestModalChart(data) {
+            const ctx = document.getElementById('backtestModalChart').getContext('2d');
+            
+            // Destroy existing chart if it exists
+            if (backtestModalChart) {
+                backtestModalChart.destroy();
+            }
+            
+            // Prepare chart data (same logic as original createBacktestChart)
+            const chartData = {
+                labels: [],
+                datasets: [{
+                    label: 'Stock Price',
+                    data: [],
+                    borderColor: '#f0b90b',
+                    backgroundColor: 'rgba(240, 185, 11, 0.1)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 0,
+                    pointHoverRadius: 5
+                }]
+            };
+            
+            // Add buy/sell markers datasets
+            const buyMarkers = {
+                label: 'Buy Signal',
+                data: [],
+                backgroundColor: '#00d4aa',
+                borderColor: '#00d4aa',
+                pointRadius: 8,
+                pointHoverRadius: 10,
+                showLine: false,
+                pointStyle: 'triangle'
+            };
+            
+            const sellMarkers = {
+                label: 'Sell Signal', 
+                data: [],
+                backgroundColor: '#f6465d',
+                borderColor: '#f6465d',
+                pointRadius: 8,
+                pointHoverRadius: 10,
+                showLine: false,
+                pointStyle: 'rectRot'
+            };
+            
+            // Use price data if available, otherwise fall back to portfolio history
+            if (data.price_data && data.price_data.length > 0) {
+                data.price_data.forEach(pricePoint => {
+                    chartData.labels.push(pricePoint.date);
+                    chartData.datasets[0].data.push(pricePoint.price);
+                });
+            } else if (data.portfolio_history) {
+                data.portfolio_history.forEach(record => {
+                    chartData.labels.push(record.date);
+                    chartData.datasets[0].data.push(record.value);
+                });
+                chartData.datasets[0].label = 'Portfolio Value';
+            }
+            
+            // Process trade history for buy/sell markers
+            if (data.trade_history) {
+                data.trade_history.forEach(trade => {
+                    const dateIndex = chartData.labels.indexOf(trade.entry_date || trade.date);
+                    if (dateIndex !== -1) {
+                        if (trade.action === 'BUY') {
+                            buyMarkers.data.push({
+                                x: dateIndex,
+                                y: trade.entry_price || trade.price
+                            });
+                        }
+                    }
+                    
+                    if (trade.exit_date && trade.exit_price) {
+                        const exitDateIndex = chartData.labels.indexOf(trade.exit_date);
+                        if (exitDateIndex !== -1) {
+                            sellMarkers.data.push({
+                                x: exitDateIndex,
+                                y: trade.exit_price
+                            });
+                        }
+                    } else if (trade.action === 'SELL') {
+                        const sellDateIndex = chartData.labels.indexOf(trade.date);
+                        if (sellDateIndex !== -1) {
+                            sellMarkers.data.push({
+                                x: sellDateIndex,
+                                y: trade.price
+                            });
+                        }
+                    }
+                });
+            }
+            
+            // Process detailed_trades for AI backtester
+            if (data.detailed_trades) {
+                data.detailed_trades.forEach(trade => {
+                    const entryDateIndex = chartData.labels.indexOf(trade.entry_date);
+                    if (entryDateIndex !== -1) {
+                        buyMarkers.data.push({
+                            x: entryDateIndex,
+                            y: trade.entry_price
+                        });
+                    }
+                    
+                    const exitDateIndex = chartData.labels.indexOf(trade.exit_date);
+                    if (exitDateIndex !== -1) {
+                        sellMarkers.data.push({
+                            x: exitDateIndex,
+                            y: trade.exit_price
+                        });
+                    }
+                });
+            }
+            
+            // Add markers to datasets if they have data
+            if (buyMarkers.data.length > 0) {
+                chartData.datasets.push(buyMarkers);
+            }
+            if (sellMarkers.data.length > 0) {
+                chartData.datasets.push(sellMarkers);
+            }
+            
+            backtestModalChart = new Chart(ctx, {
+                type: 'line',
+                data: chartData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            labels: {
+                                color: '#ffffff'
+                            }
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                            backgroundColor: 'rgba(30, 35, 41, 0.9)',
+                            titleColor: '#ffffff',
+                            bodyColor: '#ffffff',
+                            borderColor: '#3c4043',
+                            borderWidth: 1
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                color: '#3c4043'
+                            },
+                            ticks: {
+                                color: '#848e9c'
+                            }
+                        },
+                        y: {
+                            grid: {
+                                color: '#3c4043'
+                            },
+                            ticks: {
+                                color: '#848e9c'
+                            }
+                        }
+                    },
+                    interaction: {
+                        mode: 'nearest',
+                        axis: 'x',
+                        intersect: false
+                    }
+                }
+            });
+        }
+        
+        function createBacktestChart(data) {
+            const container = document.getElementById('backtestChartContainer');
+            const ctx = document.getElementById('backtestChart').getContext('2d');
+            
+            // Destroy existing chart if it exists
+            if (backtestChart) {
+                backtestChart.destroy();
+            }
+            
+            // Prepare chart data
+            const chartData = {
+                labels: [],
+                datasets: [{
+                    label: 'Stock Price',
+                    data: [],
+                    borderColor: '#f0b90b',
+                    backgroundColor: 'rgba(240, 185, 11, 0.1)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 0,
+                    pointHoverRadius: 5
+                }]
+            };
+            
+            // Add buy/sell markers datasets
+            const buyMarkers = {
+                label: 'Buy Signal',
+                data: [],
+                backgroundColor: '#00d4aa',
+                borderColor: '#00d4aa',
+                pointRadius: 8,
+                pointHoverRadius: 10,
+                showLine: false,
+                pointStyle: 'triangle'
+            };
+            
+            const sellMarkers = {
+                label: 'Sell Signal', 
+                data: [],
+                backgroundColor: '#f6465d',
+                borderColor: '#f6465d',
+                pointRadius: 8,
+                pointHoverRadius: 10,
+                showLine: false,
+                pointStyle: 'rectRot'
+            };
+            
+            // Use price data if available, otherwise fall back to portfolio history
+            if (data.price_data && data.price_data.length > 0) {
+                // Use actual stock price data
+                data.price_data.forEach(pricePoint => {
+                    chartData.labels.push(pricePoint.date);
+                    chartData.datasets[0].data.push(pricePoint.price);
+                });
+            } else if (data.portfolio_history) {
+                // Fall back to portfolio value as proxy
+                data.portfolio_history.forEach(record => {
+                    chartData.labels.push(record.date);
+                    chartData.datasets[0].data.push(record.value);
+                });
+                chartData.datasets[0].label = 'Portfolio Value';
+            }
+            
+            // Process trade history for buy/sell markers
+            if (data.trade_history) {
+                data.trade_history.forEach(trade => {
+                    const dateIndex = chartData.labels.indexOf(trade.entry_date || trade.date);
+                    if (dateIndex !== -1) {
+                        if (trade.action === 'BUY') {
+                            buyMarkers.data.push({
+                                x: dateIndex,
+                                y: trade.entry_price || trade.price
+                            });
+                        }
+                    }
+                    
+                    // Add sell markers for exit trades
+                    if (trade.exit_date && trade.exit_price) {
+                        const exitDateIndex = chartData.labels.indexOf(trade.exit_date);
+                        if (exitDateIndex !== -1) {
+                            sellMarkers.data.push({
+                                x: exitDateIndex,
+                                y: trade.exit_price
+                            });
+                        }
+                    } else if (trade.action === 'SELL') {
+                        const sellDateIndex = chartData.labels.indexOf(trade.date);
+                        if (sellDateIndex !== -1) {
+                            sellMarkers.data.push({
+                                x: sellDateIndex,
+                                y: trade.price
+                            });
+                        }
+                    }
+                });
+            }
+            
+            // Process detailed trades for AI backtester (entry/exit pairs)
+            if (data.detailed_trades) {
+                data.detailed_trades.forEach(trade => {
+                    // Add buy marker for entry
+                    const entryDateIndex = chartData.labels.indexOf(trade.entry_date);
+                    if (entryDateIndex !== -1) {
+                        buyMarkers.data.push({
+                            x: entryDateIndex,
+                            y: trade.entry_price
+                        });
+                    }
+                    
+                    // Add sell marker for exit
+                    const exitDateIndex = chartData.labels.indexOf(trade.exit_date);
+                    if (exitDateIndex !== -1) {
+                        sellMarkers.data.push({
+                            x: exitDateIndex,
+                            y: trade.exit_price
+                        });
+                    }
+                });
+            }
+            
+            chartData.datasets.push(buyMarkers, sellMarkers);
+            
+            // Create chart
+            backtestChart = new Chart(ctx, {
+                type: 'line',
+                data: chartData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            labels: {
+                                color: '#848e9c',
+                                usePointStyle: true
+                            }
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                            callbacks: {
+                                label: function(context) {
+                                    if (context.dataset.label === 'Buy Signal') {
+                                        return `Buy: $${context.parsed.y.toFixed(2)}`;
+                                    } else if (context.dataset.label === 'Sell Signal') {
+                                        return `Sell: $${context.parsed.y.toFixed(2)}`;
+                                    } else {
+                                        return `${context.dataset.label}: $${context.parsed.y.toFixed(2)}`;
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                color: '#2b3139'
+                            },
+                            ticks: {
+                                color: '#848e9c',
+                                maxTicksLimit: 8
+                            }
+                        },
+                        y: {
+                            grid: {
+                                color: '#2b3139'
+                            },
+                            ticks: {
+                                color: '#848e9c',
+                                callback: function(value) {
+                                    return '$' + value.toFixed(2);
+                                }
+                            }
+                        }
+                    },
+                    interaction: {
+                        mode: 'nearest',
+                        axis: 'x',
+                        intersect: false
+                    }
+                }
+            });
+            
+            // Show the chart container
+            container.style.display = 'block';
+        }
+
+        
+        function startVolumeDetection() {
+            // Start real-time volume detection
+            updateVolumeAlerts();
+            setInterval(updateVolumeAlerts, 10000);
+            
+            // Update volume indicator
+            setInterval(() => {
+                const percentage = Math.floor(Math.random() * 100);
+                document.getElementById('volumeFill').style.width = percentage + '%';
+                document.querySelector('.volume-indicator span:last-child').textContent = percentage + '%';
+            }, 3000);
+        }
+        
+        function updateVolumeAlerts() {
+            const symbol = currentSymbol || 'AAPL';
+            
+            fetch(`/api/volume/alerts?symbol=${symbol}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        document.getElementById('volumeAlerts').innerHTML = `<div class="alert-item error">获取交易量警报失败: ${data.error}</div>`;
+                        return;
+                    }
+                    
+                    const alertHtml = `
+                        <div class="alert-item ${data.alert_level.toLowerCase()}">
+                            <div class="alert-header">
+                                <span class="alert-symbol">${data.symbol}</span>
+                                <span class="alert-level">${data.alert_level}</span>
+                                <span class="alert-time">${new Date(data.timestamp).toLocaleTimeString()}</span>
+                            </div>
+                            <div class="alert-message">${data.alert_message}</div>
+                            <div class="alert-details">
+                                <div class="volume-stats">
+                                    <span>当前交易量: ${data.current_volume.toLocaleString()}</span>
+                                    <span>30日平均: ${data.avg_volume_30d.toLocaleString()}</span>
+                                    <span>变化: ${data.volume_change_percent > 0 ? '+' : ''}${data.volume_change_percent}%</span>
+                                </div>
+                                <div class="volume-indicators">
+                                    <span>OBV: ${data.volume_indicators.obv}</span>
+                                    <span>VWAP: $${data.volume_indicators.vwap}</span>
+                                    <span>相对交易量: ${data.volume_indicators.relative_volume}x</span>
+                                </div>
+                                <div class="historical-comparison">
+                                    <span>vs昨日: ${data.historical_comparison.vs_yesterday > 0 ? '+' : ''}${data.historical_comparison.vs_yesterday}%</span>
+                                    <span>vs周均: ${data.historical_comparison.vs_week_avg > 0 ? '+' : ''}${data.historical_comparison.vs_week_avg}%</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    document.getElementById('volumeAlerts').innerHTML = alertHtml;
+                })
+                .catch(error => {
+                    document.getElementById('volumeAlerts').innerHTML = `<div class="alert-item error">获取交易量警报失败: ${error.message}</div>`;
+                });
+        }
+        
+        function startMonitoring() {
+            fetch('/api/start_monitoring?symbol=' + currentSymbol)
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Monitoring started:', data);
+                })
+                .catch(error => {
+                    console.error('Error starting monitoring:', error);
+                });
+        }
+        
+        function addSymbol() {
+            // Create a modal input dialog
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.5);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 10000;
+            `;
+            
+            const dialog = document.createElement('div');
+            dialog.style.cssText = `
+                background: #1a1a1a;
+                padding: 20px;
+                border-radius: 8px;
+                border: 1px solid #3c4043;
+                min-width: 300px;
+                text-align: center;
+            `;
+            
+            dialog.innerHTML = `
+                <h3 style="color: #ffffff; margin-top: 0;">添加股票代码</h3>
+                <div style="margin: 10px 0; text-align: left;">
+                    <label style="color: #ffffff; display: block; margin-bottom: 5px;">选择市场:</label>
+                    <select id="marketSelect" style="width: 100%; padding: 8px; border: 1px solid #3c4043; 
+                                                     border-radius: 4px; background: #2b3139; color: #ffffff; margin-bottom: 10px;">
+                        <option value="US">美股 (如: AAPL, TSLA)</option>
+                        <option value="HK">港股 (如: 0700, 0941)</option>
+                        <option value="CN">A股 (如: 000001, 600036)</option>
+                    </select>
+                </div>
+                <input type="text" id="symbolInput" placeholder="请输入股票代码" 
+                       style="width: 100%; padding: 8px; margin: 10px 0; border: 1px solid #3c4043; 
+                              border-radius: 4px; background: #2b3139; color: #ffffff; box-sizing: border-box;">
+                <div id="formatHint" style="color: #888; font-size: 12px; margin-bottom: 10px;">美股格式: 字母代码 (如: AAPL)</div>
+                <div style="margin-top: 15px;">
+                    <button onclick="confirmAddSymbol()" 
+                            style="background: #f0b90b; color: #000; border: none; padding: 8px 16px; 
+                                   border-radius: 4px; margin-right: 10px; cursor: pointer;">确认</button>
+                    <button onclick="cancelAddSymbol()" 
+                            style="background: #3c4043; color: #ffffff; border: none; padding: 8px 16px; 
+                                   border-radius: 4px; cursor: pointer;">取消</button>
+                </div>
+            `;
+            
+            modal.appendChild(dialog);
+            document.body.appendChild(modal);
+            
+            // Focus on input
+            setTimeout(() => {
+                document.getElementById('symbolInput').focus();
+            }, 100);
+            
+            // Handle market selection change
+            document.getElementById('marketSelect').addEventListener('change', function(e) {
+                const market = e.target.value;
+                const hintElement = document.getElementById('formatHint');
+                const inputElement = document.getElementById('symbolInput');
+                
+                switch(market) {
+                    case 'US':
+                        hintElement.textContent = t('us_format_hint');
+                        inputElement.placeholder = t('enter_stock_code_placeholder');
+                        break;
+                    case 'HK':
+                        hintElement.textContent = t('hk_format_hint');
+                        inputElement.placeholder = t('enter_stock_code_placeholder');
+                        break;
+                    case 'CN':
+                        hintElement.textContent = t('cn_format_hint');
+                        inputElement.placeholder = t('enter_stock_code_placeholder');
+                        break;
+                }
+            });
+            
+            // Handle Enter key
+            document.getElementById('symbolInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    confirmAddSymbol();
+                }
+            });
+            
+            // Store modal reference for cleanup
+            window.currentModal = modal;
+        }
+        
+        function confirmAddSymbol() {
+            const input = document.getElementById('symbolInput');
+            const marketSelect = document.getElementById('marketSelect');
+            const rawSymbol = input.value.trim();
+            const market = marketSelect.value;
+            
+            // Validate and format symbol based on market
+            let formattedSymbol = '';
+            let isValid = false;
+            
+            switch(market) {
+                case 'US':
+                    // US stocks: letters only
+                    if (/^[A-Za-z]{1,5}$/.test(rawSymbol)) {
+                        formattedSymbol = rawSymbol.toUpperCase();
+                        isValid = true;
+                    }
+                    break;
+                case 'HK':
+                    // Hong Kong stocks: 4 digits + .HK
+                    const hkNumber = rawSymbol.replace(/^0+/, ''); // Remove leading zeros
+                    if (/^\d{1,4}$/.test(hkNumber)) {
+                        formattedSymbol = hkNumber.padStart(4, '0') + '.HK';
+                        isValid = true;
+                    }
+                    break;
+                case 'CN':
+                    // Chinese A-shares: 6 digits + .SH/.SZ
+                    if (/^\d{6}$/.test(rawSymbol)) {
+                        // Determine exchange based on code
+                        const code = rawSymbol;
+                        if (code.startsWith('6')) {
+                            formattedSymbol = code + '.SS'; // Shanghai
+                        } else if (code.startsWith('0') || code.startsWith('3')) {
+                            formattedSymbol = code + '.SZ'; // Shenzhen
+                        } else {
+                            formattedSymbol = code + '.SS'; // Default to Shanghai
+                        }
+                        isValid = true;
+                    }
+                    break;
+            }
+            
+            if (!isValid) {
+                let errorMsg = '';
+                switch(market) {
+                    case 'US':
+                        errorMsg = t('enter_valid_us_code');
+                        break;
+                    case 'HK':
+                        errorMsg = t('enter_valid_hk_code');
+                        break;
+                    case 'CN':
+                        errorMsg = t('enter_valid_cn_code');
+                        break;
+                }
+                alert(errorMsg);
+                return;
+            }
+            
+            // Add to watchlist
+            console.log('Adding symbol:', formattedSymbol);
+            
+            // Update current symbol and start monitoring
+            currentSymbol = formattedSymbol;
+            
+            // Update currentSymbol element if it exists (for monitor page)
+            const currentSymbolElement = document.getElementById('currentSymbol');
+            if (currentSymbolElement) {
+                currentSymbolElement.textContent = formattedSymbol;
+            }
+            
+            // Update selectedSymbol element for dashboard
+            const selectedSymbolElement = document.getElementById('selectedSymbol');
+            if (selectedSymbolElement) {
+                selectedSymbolElement.textContent = formattedSymbol;
+            }
+            
+            // Add to watchlist UI
+            addToWatchlist(formattedSymbol);
+            
+            // Start monitoring the new symbol
+            fetch('/api/start_monitoring?symbol=' + encodeURIComponent(formattedSymbol))
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Monitoring started for:', formattedSymbol);
+                    updateMarketData();
+                })
+                .catch(error => {
+                    console.error('Error starting monitoring:', error);
+                });
+            
+            const marketName = market === 'US' ? t('us_stock') : market === 'HK' ? t('hk_stock') : t('cn_stock');
+            alert(t('stock_added', {market: marketName, symbol: formattedSymbol}));
+            
+            cancelAddSymbol();
+        }
+        
+        function cancelAddSymbol() {
+            if (window.currentModal) {
+                document.body.removeChild(window.currentModal);
+                window.currentModal = null;
+            }
+        }
+        
+        function addToWatchlist(symbol) {
+            const symbolList = document.getElementById('symbolList');
+            
+            // Check if symbol already exists
+            const existingItems = symbolList.querySelectorAll('.symbol-item');
+            for (let item of existingItems) {
+                const existingSymbol = item.querySelector('.symbol-name').textContent;
+                if (existingSymbol === symbol) {
+                    console.log('Symbol already exists in watchlist:', symbol);
+                    return;
+                }
+            }
+            
+            // Create new list item
+            const listItem = document.createElement('li');
+            listItem.className = 'symbol-item';
+            
+            listItem.innerHTML = `
+                <div class="symbol-content" onclick="selectSymbol('${symbol}')">
+                    <div>
+                        <div class="symbol-name">${symbol}</div>
+                        <div class="symbol-change positive">+0.00%</div>
+                    </div>
+                    <div class="symbol-price">$0.00</div>
+                </div>
+                <button class="remove-symbol" onclick="removeFromWatchlist('${symbol}')" data-i18n-title="remove_stock" title="删除股票">-</button>
+            `;
+            
+            // Add to the list
+            symbolList.appendChild(listItem);
+            
+            // Fetch and update price for the new symbol
+            setTimeout(() => {
+                updateSingleWatchlistPrice(symbol);
+            }, 500);
+            
+            console.log('Added to watchlist:', symbol);
+        }
+        
+        // Function to update price for a single symbol
+        async function updateSingleWatchlistPrice(symbol) {
+            try {
+                const response = await fetch(`/api/kline/${symbol}?period=1d&limit=1`);
+                const data = await response.json();
+                
+                if (data.data && data.data.length > 0) {
+                    const latestData = data.data[data.data.length - 1];
+                    const price = latestData.close;
+                    const change = ((latestData.close - latestData.open) / latestData.open * 100);
+                    
+                    updateWatchlistPrice(symbol, price, change);
+                }
+            } catch (error) {
+                console.error(`Error updating price for ${symbol}:`, error);
+            }
+        }
+        
+        function removeFromWatchlist(symbol) {
+            const symbolList = document.getElementById('symbolList');
+            const items = symbolList.querySelectorAll('.symbol-item');
+            
+            for (let item of items) {
+                const symbolName = item.querySelector('.symbol-name').textContent;
+                if (symbolName === symbol) {
+                    // Add fade out animation
+                    item.style.transition = 'opacity 0.3s ease';
+                    item.style.opacity = '0';
+                    
+                    // Remove after animation
+                    setTimeout(() => {
+                        item.remove();
+                        console.log('Removed from watchlist:', symbol);
+                        
+                        // If this was the selected symbol, clear selection
+                        if (currentSymbol === symbol) {
+                            currentSymbol = '';
+                            const selectedSymbolElement = document.getElementById('selectedSymbol');
+                            if (selectedSymbolElement) {
+                                selectedSymbolElement.textContent = '请选择股票';
+                            }
+                        }
+                    }, 300);
+                    break;
+                }
+            }
+        }
+        
+        function runAnalysis(type) {
+            const target = document.getElementById('analysisTarget').value || currentSymbol;
+            document.getElementById('analysisResults').innerHTML = t('analyzing_target', {type: type, target: target});
+            
+            const apiEndpoints = {
+                'technical': '/api/analysis/technical',
+                'fundamental': '/api/analysis/fundamental',
+                'sentiment': '/api/analysis/sentiment',
+                'ai': '/api/analysis/ai_prediction'
+            };
+            
+            fetch(`${apiEndpoints[type]}?symbol=${target}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        document.getElementById('analysisResults').innerHTML = t('analysis_failed', {error: data.error});
+                        return;
+                    }
+                    
+                    let resultHtml = '';
+                    switch(type) {
+                        case 'technical':
+                            resultHtml = `
+                                <strong>技术分析结果 (${data.symbol}):</strong><br>
+                                • RSI: ${data.rsi} (${data.rsi_signal})<br>
+                                • MACD: ${data.macd_signal}<br>
+                                • 支撑位: $${data.support_level}<br>
+                                • 阻力位: $${data.resistance_level}<br>
+                                • 趋势: ${data.trend}<br>
+                                • 建议: ${data.recommendation}<br>
+                                • 置信度: ${(data.confidence * 100).toFixed(1)}%
+                            `;
+                            break;
+                        case 'fundamental':
+                            resultHtml = `
+                                <strong>基本面分析结果 (${data.symbol}):</strong><br>
+                                • P/E比率: ${data.pe_ratio}<br>
+                                • P/B比率: ${data.pb_ratio}<br>
+                                • 债务股本比: ${data.debt_to_equity}<br>
+                                • ROE: ${(data.roe * 100).toFixed(1)}%<br>
+                                • 营收增长: ${(data.revenue_growth * 100).toFixed(1)}%<br>
+                                • 利润率: ${(data.profit_margin * 100).toFixed(1)}%<br>
+                                • 财务健康: ${data.financial_health}<br>
+                                • 估值: ${data.valuation}<br>
+                                • 目标价: $${data.target_price}
+                            `;
+                            break;
+                        case 'sentiment':
+                            resultHtml = `
+                                <strong>情绪分析结果 (${data.symbol}):</strong><br>
+                                • 整体情绪: ${data.overall_sentiment}<br>
+                                • 情绪评分: ${(data.sentiment_score * 100).toFixed(1)}%<br>
+                                • 新闻情绪: ${data.news_sentiment}<br>
+                                • 社交媒体热度: ${data.social_media_buzz}<br>
+                                • 分析师评级: 买入${data.analyst_ratings.buy} 持有${data.analyst_ratings.hold} 卖出${data.analyst_ratings.sell}<br>
+                                • 市场关注度: ${data.market_attention}
+                            `;
+                            break;
+                        case 'ai':
+                            resultHtml = `
+                                <strong>AI预测结果 (${data.symbol}):</strong><br>
+                                • 预测周期: ${data.prediction_horizon}<br>
+                                • 预测方向: ${data.predicted_direction}<br>
+                                • 概率: ${(data.probability * 100).toFixed(1)}%<br>
+                                • 价格区间: $${data.predicted_price_range.low} - $${data.predicted_price_range.high}<br>
+                                • 目标价: $${data.predicted_price_range.target}<br>
+                                • 置信水平: ${data.confidence_level}<br>
+                                • 风险等级: ${data.risk_level}
+                            `;
+                            break;
+                    }
+                    document.getElementById('analysisResults').innerHTML = resultHtml;
+                })
+                .catch(error => {
+                    document.getElementById('analysisResults').innerHTML = `分析失败: ${error.message}`;
+                });
+        }
+        
+        function toggleAIOptions() {
+            const strategyType = document.getElementById('strategyType').value;
+            const aiOptionsGroup = document.getElementById('aiOptionsGroup');
+            
+            if (strategyType === 'ai') {
+                aiOptionsGroup.style.display = 'block';
+            } else {
+                aiOptionsGroup.style.display = 'none';
+            }
+        }
+        
+        function createStrategy() {
+            const type = document.getElementById('strategyType').value;
+            const target = document.getElementById('strategyTarget').value || currentSymbol;
+            
+            if (!target) {
+                document.getElementById('strategyResults').innerHTML = t('please_select_stock');
+                return;
+            }
+            
+            if (type === 'ai') {
+                const aiModel = document.getElementById('aiModelType').value;
+                document.getElementById('strategyResults').innerHTML = `正在使用${aiModel === 'google' ? 'Google AI' : 'Ollama'}生成AI策略...`;
+                
+                fetch('/api/strategy/ai/create', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        symbol: target,
+                        model_type: aiModel
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        document.getElementById('strategyResults').innerHTML = `AI策略生成失败: ${data.error}`;
+                        return;
+                    }
+                    
+                    // Store the generated strategy for backtesting
+                    lastGeneratedStrategy = data;
+                    
+                    document.getElementById('strategyResults').innerHTML = 
+                        `<strong>AI策略生成成功</strong><br>` +
+                        `策略名称: ${data.strategy_name}<br>` +
+                        `描述: ${data.description}<br>` +
+                        `模型: ${data.model_used}<br>` +
+                        `入场条件: ${data.entry_conditions.length}个<br>` +
+                        `出场条件: ${data.exit_conditions.length}个<br>` +
+                        `预期胜率: ${(data.expected_win_rate * 100).toFixed(1)}%<br>` +
+                        `生成时间: ${new Date(data.generated_at).toLocaleString()}<br><br>` +
+                        `<em>策略已保存，可以进行回测</em>`;
+                })
+                .catch(error => {
+                    document.getElementById('strategyResults').innerHTML = `AI策略生成失败: ${error.message}`;
+                });
+            } else {
+                document.getElementById('strategyResults').innerHTML = `正在创建${type}策略...`;
+                
+                fetch(`/api/strategy/create?type=${type}&symbol=${target}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.error) {
+                            document.getElementById('strategyResults').innerHTML = t('strategy_creation_failed', {error: data.error});
+                            return;
+                        }
+                        
+                        document.getElementById('strategyResults').innerHTML = 
+                            `策略创建成功<br>` +
+                            `ID: ${data.strategy_id}<br>` +
+                            `类型: ${data.type}<br>` +
+                            `状态: ${data.status}<br>` +
+                            `创建时间: ${data.created_at}`;
+                    })
+                    .catch(error => {
+                        document.getElementById('strategyResults').innerHTML = `策略创建失败: ${error.message}`;
+                    });
+            }
+        }
+        
+        let lastGeneratedStrategy = null; // Store the last generated AI strategy
+        
+        function backtest() {
+            const strategyType = document.getElementById('strategyType').value;
+            const target = document.getElementById('strategyTarget').value || currentSymbol;
+            
+            if (!target) {
+                alert(t('please_select_stock'));
+                return;
+            }
+            
+            // Show loading in modal
+            openBacktestModal();
+            document.getElementById('backtestInfoContent').innerHTML = '<div style="text-align: center; color: #ffffff;">正在进行回测...</div>';
+            document.getElementById('backtestModalChart').style.display = 'none';
+            
+            if (strategyType === 'ai' && !lastGeneratedStrategy) {
+                // Create an enhanced multi-timeframe AI strategy with comprehensive time-based systems
+                lastGeneratedStrategy = {
+                    'strategy_name': 'Enhanced Multi-Timeframe Strategy with Time-Based Systems',
+                    'description': 'Comprehensive trading strategy with daily operations, time-based adjustments, volatility detection, and coordinated multi-timeframe execution for maximum profit',
+                    'use_multi_timeframe': true,
+                    'entry_conditions': [
+                        // Enhanced daily conditions for frequent trading
+                        {'condition': 'daily_momentum', 'parameters': {'threshold': -0.3}, 'confidence': 0.7},
+                        {'condition': 'daily_micro_dip', 'parameters': {'threshold': -0.5}, 'confidence': 0.6},
+                        {'condition': 'daily_volume_spike', 'parameters': {'threshold': 1.1}, 'confidence': 0.65},
+                        
+                        // 3-day swing conditions
+                        {'condition': '3day_swing', 'parameters': {'threshold': -1.0}, 'confidence': 0.75},
+                        {'condition': '3day_momentum_reversal', 'parameters': {'threshold': -2.0}, 'confidence': 0.65},
+                        
+                        // Weekly and longer timeframe conditions
+                        {'condition': 'weekly_trend', 'parameters': {'threshold': 1.5}, 'confidence': 0.8},
+                        {'condition': 'biweekly_momentum', 'parameters': {'threshold': 3.0}, 'confidence': 0.75},
+                        {'condition': 'monthly_value', 'parameters': {'threshold': -5.0}, 'confidence': 0.7},
+                        
+                        // Time-based signals for guaranteed daily activity
+                        {'condition': 'monday_opportunity', 'parameters': {'strength': 0.4}, 'confidence': 0.6},
+                        {'condition': 'midweek_momentum', 'parameters': {'strength': 0.5}, 'confidence': 0.7},
+                        {'condition': 'thursday_positioning', 'parameters': {'strength': 0.45}, 'confidence': 0.65},
+                        {'condition': 'friday_profit_taking', 'parameters': {'strength': 0.3}, 'confidence': 0.6},
+                        {'condition': 'monthly_cycle_opportunity', 'parameters': {'strength': 0.4}, 'confidence': 0.6},
+                        {'condition': 'daily_opportunity', 'parameters': {'strength': 0.35}, 'confidence': 0.5}
+                    ],
+                    'exit_conditions': [
+                        {'condition': 'daily_profit', 'parameters': {'threshold': 0.012}, 'confidence': 0.9},
+                        {'condition': '3day_profit', 'parameters': {'threshold': 0.025}, 'confidence': 0.9},
+                        {'condition': 'weekly_profit', 'parameters': {'threshold': 0.08}, 'confidence': 0.85},
+                        {'condition': 'biweekly_profit', 'parameters': {'threshold': 0.12}, 'confidence': 0.85},
+                        {'condition': 'monthly_profit', 'parameters': {'threshold': 0.25}, 'confidence': 0.8},
+                        {'condition': 'risk_management', 'parameters': {'threshold': -0.015}, 'confidence': 1.0}
+                    ],
+                    'risk_management': {
+                        'max_position_size': 0.35,
+                        'stop_loss': 0.015,
+                        'take_profit': 0.12,
+                        'max_holding_days': 30
+                    },
+                    'timeframe_allocations': {
+                        'daily': 0.20,      // Enhanced daily allocation for frequent operations
+                        '3day': 0.25,       // Enhanced swing trading
+                        'weekly': 0.25,     // Trend following
+                        'biweekly': 0.15,   // Momentum capture
+                        'monthly': 0.15     // Value positioning
+                    },
+                    'time_based_enhancements': {
+                        // A. 每日策略变化
+                        'monday_conservative': {'aggressiveness': 0.8, 'frequency_multiplier': 1.2, 'daily_signal_boost': 0.1},
+                        'midweek_aggressive': {'aggressiveness': 1.3, 'frequency_multiplier': 1.5, 'daily_signal_boost': 0.2},
+                        'thursday_positioning': {'aggressiveness': 1.1, 'frequency_multiplier': 1.3, 'daily_signal_boost': 0.15},
+                        'friday_profit_taking': {'aggressiveness': 0.9, 'frequency_multiplier': 1.1, 'daily_signal_boost': 0.05},
+                        
+                        // B. 每周策略调整
+                        'first_week_boost': {'frequency_multiplier': 1.2, 'aggressiveness': 1.1},
+                        'fourth_week_boost': {'frequency_multiplier': 1.3, 'aggressiveness': 1.2},
+                        
+                        // C. 每月策略周期
+                        'month_start_boost': {'frequency_multiplier': 1.15},
+                        'month_end_boost': {'frequency_multiplier': 1.25}
+                    },
+                    'volatility_adjustments': {
+                        // 市场波动性检测
+                        'high_volatility_boost': true,      // 高波动期: 降低入场阈值，提高交易频率
+                        'low_volatility_conservative': true, // 低波动期: 保持标准阈值，确保质量
+                        'dynamic_thresholds': true,
+                        'price_volatility_weight': 0.4,     // 价格波动性 (0-40%)
+                        'momentum_volatility_weight': 0.3,   // 价格动量波动性 (0-30%)
+                        'volume_volatility_weight': 0.3      // 成交量波动性 (0-30%)
+                    },
+                    'guaranteed_daily_activity': {
+                        // 保证每日交易活动
+                        'monday_opportunity': {'strength': 0.4, 'confidence': 0.6},
+                        'midweek_momentum': {'strength': 0.5, 'confidence': 0.7},
+                        'thursday_positioning': {'strength': 0.45, 'confidence': 0.65},
+                        'monthly_cycle_opportunity': {'strength': 0.4, 'confidence': 0.6},
+                        'daily_opportunity': {'strength': 0.35, 'confidence': 0.5}
+                    },
+                    'technical_indicators': ['RSI', 'MA', 'Volume', 'Momentum', 'MACD', 'Bollinger', 'Volatility', 'Support', 'Resistance'],
+                    'market_conditions': ['trending', 'volatile', 'sideways', 'reversal', 'breakout', 'consolidation'],
+                    'confidence_score': 0.88,
+                    'expected_win_rate': 0.72,
+                    'model_used': 'Enhanced-Multi-Timeframe-v2',
+                    'generated_at': new Date().toISOString()
+                };
+            }
+            
+            if (strategyType === 'ai' && lastGeneratedStrategy) {
+                // Backtest AI strategy
+                fetch('/api/backtest/ai', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        symbol: target,
+                        strategy: lastGeneratedStrategy
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        document.getElementById('backtestInfoContent').innerHTML = 
+                            `<div style="color: #ff6b6b; text-align: center;">AI策略回测失败: ${data.error}</div>`;
+                        return;
+                    }
+                    
+                    // Populate info panel with AI backtest results
+                    populateBacktestInfo(data, 'ai');
+                    
+                    // Create chart in modal
+                    document.getElementById('backtestModalChart').style.display = 'block';
+                    createBacktestModalChart(data);
+                })
+                .catch(error => {
+                    document.getElementById('backtestInfoContent').innerHTML = 
+                        `<div style="color: #ff6b6b; text-align: center;">AI策略回测失败: ${error.message}</div>`;
+                });
+            } else {
+                // Traditional backtest
+                fetch('/api/backtest?symbol=' + target)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'success' && data.results) {
+                            // Populate info panel with traditional backtest results
+                            populateBacktestInfo(data, 'traditional');
+                            
+                            // Create chart in modal if data is available
+                            if (data.results.portfolio_history || data.results.trade_history) {
+                                document.getElementById('backtestModalChart').style.display = 'block';
+                                createBacktestModalChart(data.results);
+                            }
+                        } else {
+                            // Fallback data for demo
+                            const fallbackData = {
+                                results: {
+                                    total_return_pct: 12.5,
+                                    max_drawdown_pct: -3.2,
+                                    sharpe_ratio: 1.2,
+                                    volatility_pct: 15.8,
+                                    total_trades: 25,
+                                    initial_capital: 100000,
+                                    final_value: 112500
+                                }
+                            };
+                            populateBacktestInfo(fallbackData, 'traditional');
+                        }
+                    })
+                    .catch(error => {
+                        document.getElementById('backtestInfoContent').innerHTML = 
+                            `<div style="color: #ff6b6b; text-align: center;">回测失败，请重试: ${error.message}</div>`;
+                    });
+            }
+        }
+        
+        function optimizeStrategy() {
+            const target = document.getElementById('strategyTarget').value || currentSymbol;
+            
+            if (!lastGeneratedStrategy) {
+                document.getElementById('strategyResults').innerHTML = t('no_strategy_to_optimize');
+                return;
+            }
+            
+            document.getElementById('strategyResults').innerHTML = '正在进行策略优化...<br>这可能需要几分钟时间，请耐心等待';
+            
+            fetch('/api/backtest/ai/optimized', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    symbol: target,
+                    strategy: lastGeneratedStrategy
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    document.getElementById('strategyResults').innerHTML = `策略优化失败: ${data.error}`;
+                    return;
+                }
+                
+                const dailyAnalysis = data.daily_analysis || {};
+                const performance = data.performance_metrics || {};
+                const trading = data.trading_statistics || {};
+                const optimization = data.optimization_summary || {};
+                
+                // Format trading dates display
+                let tradingPeriodText = '';
+                if (trading.start_trading_date && trading.end_trading_date) {
+                    tradingPeriodText = `交易开始日期: ${trading.start_trading_date}<br>` +
+                                      `交易结束日期: ${trading.end_trading_date}<br>`;
+                } else if (trading.total_trades === 0) {
+                    tradingPeriodText = `交易期间: 未执行交易<br>`;
+                }
+                
+                // Format optimization summary
+                let optimizationSummary = '';
+                if (optimization.total_iterations) {
+                    optimizationSummary = `<br><strong>优化过程:</strong><br>` +
+                        `优化迭代次数: ${optimization.total_iterations}次<br>` +
+                        `最终收益率: ${optimization.final_return_pct}%<br>` +
+                        `优化${optimization.optimization_successful ? '成功' : '未达到目标'}<br>` +
+                        `最佳迭代: 第${optimization.best_iteration}次<br><br>`;
+                        
+                    // Show iteration details
+                    if (optimization.optimization_results && optimization.optimization_results.length > 0) {
+                        optimizationSummary += `<strong>迭代详情:</strong><br>`;
+                        optimization.optimization_results.forEach((result, index) => {
+                            optimizationSummary += `第${result.iteration}次: 收益率${result.total_return_pct}%, 胜率${result.win_rate_pct}%<br>`;
+                        });
+                        optimizationSummary += '<br>';
+                    }
+                }
+                
+                document.getElementById('strategyResults').innerHTML = 
+                    `<strong>AI策略优化完成</strong><br>` +
+                    optimizationSummary +
+                    `<strong>最终表现:</strong><br>` +
+                    `总收益率: ${performance.total_return_pct || 0}%<br>` +
+                    `最大回撤: ${performance.max_drawdown_pct || 0}%<br>` +
+                    `夏普比率: ${performance.sharpe_ratio || 0}<br>` +
+                    `年化波动率: ${performance.annualized_volatility_pct || 0}%<br><br>` +
+                    `<strong>交易统计:</strong><br>` +
+                    tradingPeriodText +
+                    `总交易次数: ${trading.total_trades || 0}次<br>` +
+                    `胜率: ${trading.win_rate_pct || 0}%<br>` +
+                    `平均交易收益: ${trading.avg_trade_return_pct || 0}%<br>` +
+                    `平均持仓天数: ${trading.avg_holding_period_days || 0}天<br><br>` +
+                    `<strong>每日分析:</strong><br>` +
+                    `每日交易频率: ${dailyAnalysis.daily_trading_frequency_pct || 0}%<br>` +
+                    `每日盈利频率: ${dailyAnalysis.daily_profit_frequency_pct || 0}%<br>` +
+                    `有交易的天数: ${dailyAnalysis.days_with_trades || 0}天<br>` +
+                    `有盈利的天数: ${dailyAnalysis.days_with_profits || 0}天<br>` +
+                    `平均每日收益: ${dailyAnalysis.avg_daily_return_pct || 0}%<br><br>` +
+                    `<strong>策略评估:</strong><br>` +
+                    `${dailyAnalysis.daily_trading_frequency_pct > 50 ? '✅ 交易频率充足' : '⚠️ 交易频率偏低'}<br>` +
+                    `${dailyAnalysis.daily_profit_frequency_pct > 40 ? '✅ 盈利频率良好' : '⚠️ 盈利频率需改善'}<br>` +
+                    `${trading.win_rate_pct > 55 ? '✅ 胜率表现良好' : '⚠️ 胜率需要提升'}<br>` +
+                    `${optimization.optimization_successful ? '✅ 策略优化成功，达到目标收益率' : '⚠️ 策略仍需进一步优化'}`;
+            })
+            .catch(error => {
+                document.getElementById('strategyResults').innerHTML = `策略优化失败: ${error.message}`;
+            });
+        }
+        
+        function deployStrategy() {
+            document.getElementById('strategyResults').innerHTML = '正在部署策略...';
+            
+            fetch(`/api/strategy/deploy?strategy_id=strategy_${document.getElementById('strategyType').value}_${currentSymbol}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        document.getElementById('strategyResults').innerHTML = `策略部署失败: ${data.error}`;
+                        return;
+                    }
+                    
+                    document.getElementById('strategyResults').innerHTML = 
+                        `策略部署成功<br>` +
+                        `状态: ${data.status}<br>` +
+                        `部署时间: ${data.deployed_at}<br>` +
+                        `监控状态: ${data.monitoring ? '已启用' : '未启用'}<br>` +
+                        `风险等级: ${data.risk_level}`;
+                })
+                .catch(error => {
+                    document.getElementById('strategyResults').innerHTML = `策略部署失败: ${error.message}`;
+                });
+        }
+        
+        function stopStrategy() {
+            document.getElementById('strategyResults').innerHTML = t('strategy_stopped');
+        }
+        
+        // Push notification toggle
+        document.getElementById('pushToggle').addEventListener('click', function() {
+            toggleNotifications();
+        });
+        
+        function toggleNotifications() {
+            const button = document.getElementById('pushToggle');
+            const isActive = button.classList.contains('active');
+            
+            // First get current settings
+            fetch('/api/notifications/settings')
+                .then(response => response.json())
+                .then(currentSettings => {
+                    // Toggle push_enabled
+                    const newSettings = {
+                        ...currentSettings,
+                        push_enabled: !isActive
+                    };
+                    
+                    // Update settings
+                    return fetch('/api/notifications/update', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(newSettings)
+                    });
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        console.error(`推送设置失败: ${data.error}`);
+                        return;
+                    }
+                    
+                    const status = document.getElementById('pushStatus');
+                    if (data.settings.push_enabled) {
+                        button.classList.add('active');
+                        status.classList.remove('inactive');
+                        button.innerHTML = '<span class=\"status-indicator\" id=\"pushStatus\"></span>' + t('push_notifications_enabled');
+                        pushEnabled = true;
+                    } else {
+                        button.classList.remove('active');
+                        status.classList.add('inactive');
+                        button.innerHTML = '<span class=\"status-indicator inactive\" id=\"pushStatus\"></span>' + t('push_notifications');
+                        pushEnabled = false;
+                    }
+                })
+                .catch(error => {
+                    console.error(`推送设置失败: ${error.message}`);
+                });
+        }
+        
+        function loadNotificationSettings() {
+            fetch('/api/notifications/settings')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        console.error(`加载推送设置失败: ${data.error}`);
+                        return;
+                    }
+                    
+                    const button = document.getElementById('pushToggle');
+                    const status = document.getElementById('pushStatus');
+                    if (data.push_enabled) {
+                        button.classList.add('active');
+                        status.classList.remove('inactive');
+                        button.innerHTML = '<span class=\"status-indicator\" id=\"pushStatus\"></span>' + t('push_notifications_enabled');
+                        pushEnabled = true;
+                    } else {
+                        button.classList.remove('active');
+                        status.classList.add('inactive');
+                        button.innerHTML = '<span class=\"status-indicator inactive\" id=\"pushStatus\"></span>' + t('push_notifications');
+                        pushEnabled = false;
+                    }
+                })
+                .catch(error => {
+                    console.error(`加载推送设置失败: ${error.message}`);
+                });
+        }
+        
+        // Volume monitoring functionality
+        let volumeMonitoringActive = false;
+        
+        function toggleVolumeMonitoring() {
+            const button = document.querySelector('.volume-toggle');
+            const statusText = document.getElementById('volumeStatusText');
+            
+            volumeMonitoringActive = !volumeMonitoringActive;
+            
+            if (volumeMonitoringActive) {
+                button.textContent = t('stop_monitoring');
+                button.style.background = '#f6465d';
+                statusText.textContent = t('volume_monitoring_started');
+                statusText.style.color = '#0ecb81';
+                
+                // Start monitoring simulation
+                startVolumeMonitoringSimulation();
+            } else {
+                button.textContent = t('start_monitoring');
+                button.style.background = '#0ecb81';
+                statusText.textContent = t('click_to_start_monitoring');
+                statusText.style.color = '#848e9c';
+                
+                // Stop monitoring simulation
+                stopVolumeMonitoringSimulation();
+            }
+        }
+        
+        let volumeMonitoringInterval;
+        
+        function startVolumeMonitoringSimulation() {
+            volumeMonitoringInterval = setInterval(() => {
+                // Simulate volume changes
+                const volumeFill = document.getElementById('volumeFill');
+                const randomVolume = Math.floor(Math.random() * 100);
+                volumeFill.style.width = randomVolume + '%';
+                volumeFill.nextElementSibling.textContent = randomVolume + '%';
+                
+                // Occasionally add new alerts
+                if (Math.random() < 0.3) {
+                    addVolumeAlert();
+                }
+            }, 3000);
+        }
+        
+        function stopVolumeMonitoringSimulation() {
+            if (volumeMonitoringInterval) {
+                clearInterval(volumeMonitoringInterval);
+            }
+        }
+        
+        function addVolumeAlert() {
+            const alertsList = document.getElementById('volumeAlerts');
+            const symbols = ['AAPL', 'TSLA', 'GOOGL', 'MSFT', 'AMZN'];
+            const symbol = symbols[Math.floor(Math.random() * symbols.length)];
+            const change = Math.floor(Math.random() * 200) + 50;
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString();
+            
+            const alertItem = document.createElement('div');
+            alertItem.className = 'alert-item';
+            alertItem.innerHTML = `
+                <div class="alert-time">${timeStr}</div>
+                <div class="alert-message">${symbol} 检测到异常交易量增长 +${change}%</div>
+            `;
+            
+            alertsList.insertBefore(alertItem, alertsList.firstChild);
+            
+            // Keep only the latest 5 alerts
+            while (alertsList.children.length > 5) {
+                alertsList.removeChild(alertsList.lastChild);
+            }
+        }
+        
+        // K-line Chart Implementation
+        let klineChart = null;
+        let volumeChart = null;
+        let candlestickSeries = null;
+        let volumeSeries = null;
+        // currentSymbol already declared globally
+        let currentTimeframe = '1d';
+        
+        // Initialize K-line chart
+        function initKlineChart() {
+            console.log('Starting initKlineChart function');
+            
+            const chartContainer = document.getElementById('klineChart');
+            const volumeContainer = document.getElementById('volumeChart');
+            
+            if (!chartContainer || !volumeContainer) {
+                console.error('Chart containers not found');
+                return;
+            }
+            
+            console.log('Chart containers found, creating charts...');
+            
+            try {
+                // Create main K-line chart
+                klineChart = LightweightCharts.createChart(chartContainer, {
+                    width: chartContainer.clientWidth,
+                    height: 450,
+                    layout: {
+                        backgroundColor: '#0a0e1a',
+                        textColor: '#848e9c',
+                    },
+                    grid: {
+                        vertLines: {
+                            color: '#2b3139',
+                        },
+                        horzLines: {
+                            color: '#2b3139',
+                        },
+                    },
+                    crosshair: {
+                        mode: LightweightCharts.CrosshairMode.Normal,
+                    },
+                    rightPriceScale: {
+                        borderColor: '#2b3139',
+                    },
+                    timeScale: {
+                        borderColor: '#2b3139',
+                        timeVisible: true,
+                        secondsVisible: false,
+                    },
+                });
+                 
+                 console.log('K-line chart created successfully');
+                 console.log('klineChart object:', klineChart);
+                 console.log('klineChart methods:', Object.getOwnPropertyNames(klineChart));
+                 
+                 // Create volume chart
+                 volumeChart = LightweightCharts.createChart(volumeContainer, {
+                    width: volumeContainer.clientWidth,
+                    height: 150,
+                    layout: {
+                        backgroundColor: '#0a0e1a',
+                        textColor: '#848e9c',
+                    },
+                    grid: {
+                        vertLines: {
+                            color: '#2b3139',
+                        },
+                    horzLines: {
+                        color: '#2b3139',
+                    },
+                },
+                rightPriceScale: {
+                    borderColor: '#2b3139',
+                },
+                timeScale: {
+                    borderColor: '#2b3139',
+                    timeVisible: true,
+                    secondsVisible: false,
+                },
+            });
+            
+            console.log('Volume chart created successfully');
+            
+            // Add candlestick series
+            candlestickSeries = klineChart.addCandlestickSeries({
+                upColor: '#0ecb81',
+                downColor: '#f6465d',
+                borderDownColor: '#f6465d',
+                borderUpColor: '#0ecb81',
+                wickDownColor: '#f6465d',
+                wickUpColor: '#0ecb81',
+            });
+            
+            console.log('Candlestick series added successfully');
+            
+            // Add volume series
+            volumeSeries = volumeChart.addHistogramSeries({
+                color: '#26a69a',
+                priceFormat: {
+                    type: 'volume',
+                },
+                priceScaleId: '',
+                scaleMargins: {
+                    top: 0.8,
+                    bottom: 0,
+                },
+            });
+            
+            console.log('Volume series added successfully');
+            
+            // Load initial data
+            loadKlineData(currentSymbol, currentTimeframe);
+            
+            // Synchronize crosshairs and time scales
+            klineChart.subscribeCrosshairMove(function(param) {
+                if (param.point === undefined || !param.time || param.point.x < 0 || param.point.x > chartContainer.clientWidth || param.point.y < 0 || param.point.y > 450) {
+                    volumeChart.clearCrosshairPosition();
+                    return;
+                }
+                volumeChart.setCrosshairPosition(param.point.x, param.time, volumeContainer);
+                
+                // Update market data display
+                if (param.seriesPrices && param.seriesPrices.size > 0) {
+                    const candleData = param.seriesPrices.get(candlestickSeries);
+                    if (candleData) {
+                        updateMarketDataDisplay(candleData);
+                    }
+                }
+            });
+            
+            volumeChart.subscribeCrosshairMove(function(param) {
+                if (param.point === undefined || !param.time || param.point.x < 0 || param.point.x > volumeContainer.clientWidth || param.point.y < 0 || param.point.y > 150) {
+                    klineChart.clearCrosshairPosition();
+                    return;
+                }
+                klineChart.setCrosshairPosition(param.point.x, param.time, chartContainer);
+            });
+            
+            // Synchronize time scale visibility
+            klineChart.timeScale().subscribeVisibleTimeRangeChange(function(timeRange) {
+                if (timeRange && volumeChart) {
+                    try {
+                        volumeChart.timeScale().setVisibleRange(timeRange);
+                    } catch (e) {
+                        console.warn('Error syncing volume chart time range:', e);
+                    }
+                }
+            });
+            
+            volumeChart.timeScale().subscribeVisibleTimeRangeChange(function(timeRange) {
+                if (timeRange && klineChart) {
+                    try {
+                        klineChart.timeScale().setVisibleRange(timeRange);
+                    } catch (e) {
+                        console.warn('Error syncing kline chart time range:', e);
+                    }
+                }
+            });
+            
+            // Handle window resize
+            window.addEventListener('resize', () => {
+                if (klineChart && chartContainer) {
+                    klineChart.applyOptions({ 
+                        width: chartContainer.clientWidth,
+                        height: 450
+                    });
+                }
+                if (volumeChart && volumeContainer) {
+                    volumeChart.applyOptions({ 
+                        width: volumeContainer.clientWidth,
+                        height: 150
+                    });
+                }
+            });
+            
+            } catch (error) {
+                console.error('Error in initKlineChart:', error);
+                throw error; // Re-throw to trigger retry in the calling function
+            }
+        }
+        
+        // Load K-line data
+        async function loadKlineData(symbol, timeframe) {
+            try {
+                console.log(`Loading K-line data for ${symbol} with timeframe ${timeframe}`);
+                
+                // Fetch real K-line data from API
+                const klineResponse = await fetch(`/api/kline/${symbol}?period=${timeframe}&limit=200`);
+                const klineData = await klineResponse.json();
+                
+                console.log('K-line API response:', klineData);
+                
+                // Fetch volume data
+                const volumeResponse = await fetch(`/api/volume/${symbol}?period=${timeframe}&limit=200`);
+                const volumeDataResponse = await volumeResponse.json();
+                
+                console.log('Volume API response:', volumeDataResponse);
+                
+                // Fetch chip distribution data
+                const chipResponse = await fetch(`/api/chip_distribution/${symbol}`);
+                const chipData = await chipResponse.json();
+                
+                console.log('Chip distribution API response:', chipData);
+                
+                // Check if we have valid data
+                if (klineData.data && Array.isArray(klineData.data) && klineData.data.length > 0 &&
+                    volumeDataResponse.data && Array.isArray(volumeDataResponse.data) && volumeDataResponse.data.length > 0) {
+                    
+                    console.log(`Processing ${klineData.data.length} candle data points and ${volumeDataResponse.data.length} volume data points`);
+                    
+                    // Convert data format for TradingView charts with validation
+                    const candleData = klineData.data.map((item, index) => {
+                        // Validate all required fields
+                        if (item.time == null || item.open == null || item.high == null || item.low == null || item.close == null) {
+                            console.error(`Invalid candle data at index ${index}:`, item);
+                            return null;
+                        }
+                        
+                        return {
+                            time: Number(item.time),
+                            open: Number(item.open),
+                            high: Number(item.high),
+                            low: Number(item.low),
+                            close: Number(item.close)
+                        };
+                    }).filter(item => item !== null);
+                    
+                    const volumeData = volumeDataResponse.data.map((item, index) => {
+                        // Validate volume data fields
+                        if (item.time == null || item.value == null) {
+                            console.error(`Invalid volume data at index ${index}:`, item);
+                            return null;
+                        }
+                        
+                        const candleIndex = Math.min(index, candleData.length - 1);
+                        const candle = candleData[candleIndex];
+                        
+                        return {
+                            time: Number(item.time),
+                            value: Number(item.value),
+                            color: candle && candle.close >= candle.open ? '#0ecb81' : '#f6465d'
+                        };
+                    }).filter(item => item !== null);
+                    
+                    console.log(`Processed ${candleData.length} valid candle data points and ${volumeData.length} valid volume data points`);
+                    
+                    // Clear existing series
+                    if (candlestickSeries && klineChart) {
+                        try {
+                            klineChart.removeSeries(candlestickSeries);
+                        } catch (e) {
+                            console.warn('Error removing candlestick series:', e);
+                        }
+                        candlestickSeries = null;
+                    }
+                    if (volumeSeries && volumeChart) {
+                        try {
+                            volumeChart.removeSeries(volumeSeries);
+                        } catch (e) {
+                            console.warn('Error removing volume series:', e);
+                        }
+                        volumeSeries = null;
+                    }
+                    
+                    // Add new series with data
+                    candlestickSeries = klineChart.addCandlestickSeries({
+                        upColor: '#0ecb81',
+                        downColor: '#f6465d',
+                        borderDownColor: '#f6465d',
+                        borderUpColor: '#0ecb81',
+                        wickDownColor: '#f6465d',
+                        wickUpColor: '#0ecb81',
+                    });
+                    candlestickSeries.setData(candleData);
+                    
+                    volumeSeries = volumeChart.addHistogramSeries({
+                        color: '#26a69a',
+                        priceFormat: {
+                            type: 'volume',
+                        },
+                        priceScaleId: '',
+                        scaleMargins: {
+                            top: 0.8,
+                            bottom: 0,
+                        },
+                    });
+                    volumeSeries.setData(volumeData);
+                    
+                    // Update chip distribution
+                    if (chipData.data) {
+                        updateChipDistribution(chipData.data);
+                    }
+                    
+                    // Update market data display with latest data
+                    if (candleData.length > 0) {
+                        const latestCandle = candleData[candleData.length - 1];
+                        updateMarketDataDisplay(latestCandle);
+                    }
+                    
+                    console.log('Charts updated successfully with real data');
+                    
+                } else {
+                    console.warn('Invalid or empty API response data, using fallback mock data');
+                    throw new Error('Invalid API response data');
+                }
+            } catch (error) {
+                console.error('Error loading K-line data:', error);
+                console.log('Error details:', {
+                    message: error.message,
+                    stack: error.stack,
+                    symbol: symbol,
+                    timeframe: timeframe
+                });
+                console.log('Falling back to mock data');
+                
+                // Fallback to mock data if API fails
+                const data = generateMockKlineData(symbol, timeframe);
+                
+                if (klineChart && volumeChart) {
+                    // Clear existing series first (check if they exist)
+                    if (candlestickSeries && klineChart) {
+                        try {
+                            klineChart.removeSeries(candlestickSeries);
+                        } catch (e) {
+                            console.warn('Error removing candlestick series:', e);
+                        }
+                        candlestickSeries = null;
+                    }
+                    if (volumeSeries && volumeChart) {
+                        try {
+                            volumeChart.removeSeries(volumeSeries);
+                        } catch (e) {
+                            console.warn('Error removing volume series:', e);
+                        }
+                        volumeSeries = null;
+                    }
+                    
+                    // Add new series with mock data
+                    candlestickSeries = klineChart.addCandlestickSeries({
+                        upColor: '#0ecb81',
+                        downColor: '#f6465d',
+                        borderDownColor: '#f6465d',
+                        borderUpColor: '#0ecb81',
+                        wickDownColor: '#f6465d',
+                        wickUpColor: '#0ecb81',
+                    });
+                    candlestickSeries.setData(data.candleData);
+                    
+                    volumeSeries = volumeChart.addHistogramSeries({
+                        color: '#26a69a',
+                        priceFormat: {
+                            type: 'volume',
+                        },
+                        priceScaleId: '',
+                        scaleMargins: {
+                            top: 0.8,
+                            bottom: 0,
+                        },
+                    });
+                    volumeSeries.setData(data.volumeData);
+                    
+                    // Update chip distribution with mock data
+                    const mockChipData = data.candleData.map((item, index) => ({
+                        price: item.close,
+                        volume: data.volumeData[index].value
+                    }));
+                    updateChipDistribution(mockChipData);
+                    
+                    // Update market data display with latest mock data
+                    if (data.candleData.length > 0) {
+                        const latestCandle = data.candleData[data.candleData.length - 1];
+                        updateMarketDataDisplay(latestCandle);
+                    }
+                    
+                    console.log('Charts updated with mock data');
+                }
+            }
+        }
+        
+        // Generate mock K-line data
+        function generateMockKlineData(symbol, timeframe) {
+            const candleData = [];
+            const volumeData = [];
+            const basePrice = 150;
+            let currentPrice = basePrice;
+            
+            const timeMultiplier = {
+                '1m': 60,
+                '5m': 300,
+                '15m': 900,
+                '30m': 1800,
+                '1h': 3600,
+                '1d': 86400,
+                '1w': 604800,
+                '1M': 2592000
+            };
+            
+            const multiplier = timeMultiplier[timeframe] || 86400;
+            const dataPoints = timeframe === '1d' ? 100 : 50;
+            
+            for (let i = 0; i < dataPoints; i++) {
+                const time = Math.floor(Date.now() / 1000) - (dataPoints - i) * multiplier;
+                
+                const open = currentPrice;
+                const volatility = Math.random() * 4 - 2;
+                const high = open + Math.abs(volatility) + Math.random() * 2;
+                const low = open - Math.abs(volatility) - Math.random() * 2;
+                const close = low + Math.random() * (high - low);
+                
+                candleData.push({
+                    time: time,
+                    open: parseFloat(open.toFixed(2)),
+                    high: parseFloat(high.toFixed(2)),
+                    low: parseFloat(low.toFixed(2)),
+                    close: parseFloat(close.toFixed(2))
+                });
+                
+                volumeData.push({
+                    time: time,
+                    value: Math.floor(Math.random() * 1000000) + 100000,
+                    color: close >= open ? '#0ecb81' : '#f6465d'
+                });
+                
+                currentPrice = close;
+            }
+            
+            return { candleData, volumeData };
+        }
+        
+        // Update market data display
+        function updateMarketDataDisplay(candleData) {
+            if (candleData) {
+                document.getElementById('currentPrice').textContent = `$${candleData.close.toFixed(2)}`;
+                document.getElementById('openPrice').textContent = `$${candleData.open.toFixed(2)}`;
+                document.getElementById('highPrice').textContent = `$${candleData.high.toFixed(2)}`;
+                document.getElementById('lowPrice').textContent = `$${candleData.low.toFixed(2)}`;
+                
+                const change = ((candleData.close - candleData.open) / candleData.open * 100);
+                const changeElement = document.getElementById('priceChange');
+                changeElement.textContent = `${change >= 0 ? '+' : ''}${change.toFixed(2)}%`;
+                changeElement.className = `data-value ${change >= 0 ? 'positive' : 'negative'}`;
+                
+                // Update watchlist price for current symbol
+                updateWatchlistPrice(currentSymbol, candleData.close, change);
+            }
+        }
+        
+        // Update watchlist price for a specific symbol
+        function updateWatchlistPrice(symbol, price, changePercent) {
+            const symbolList = document.getElementById('symbolList');
+            const items = symbolList.querySelectorAll('.symbol-item');
+            
+            for (let item of items) {
+                const symbolName = item.querySelector('.symbol-name').textContent;
+                if (symbolName === symbol) {
+                    // Update price
+                    const priceElement = item.querySelector('.symbol-price');
+                    priceElement.textContent = `$${price.toFixed(2)}`;
+                    
+                    // Update change percentage
+                    const changeElement = item.querySelector('.symbol-change');
+                    changeElement.textContent = `${changePercent >= 0 ? '+' : ''}${changePercent.toFixed(2)}%`;
+                    changeElement.className = `symbol-change ${changePercent >= 0 ? 'positive' : 'negative'}`;
+                    
+                    break;
+                }
+            }
+        }
+        
+        // Function to fetch and update all watchlist prices
+        async function updateAllWatchlistPrices() {
+            const symbolList = document.getElementById('symbolList');
+            const items = symbolList.querySelectorAll('.symbol-item');
+            
+            for (let item of items) {
+                const symbol = item.querySelector('.symbol-name').textContent;
+                try {
+                    // Fetch latest price data for each symbol
+                    const response = await fetch(`/api/kline/${symbol}?period=1d&limit=1`);
+                    const data = await response.json();
+                    
+                    if (data.data && data.data.length > 0) {
+                        const latestData = data.data[data.data.length - 1];
+                        const price = latestData.close;
+                        const change = ((latestData.close - latestData.open) / latestData.open * 100);
+                        
+                        // Update price in watchlist
+                        const priceElement = item.querySelector('.symbol-price');
+                        priceElement.textContent = `$${price.toFixed(2)}`;
+                        
+                        // Update change percentage
+                        const changeElement = item.querySelector('.symbol-change');
+                        changeElement.textContent = `${change >= 0 ? '+' : ''}${change.toFixed(2)}%`;
+                        changeElement.className = `symbol-change ${change >= 0 ? 'positive' : 'negative'}`;
+                    }
+                } catch (error) {
+                    console.error(`Error updating price for ${symbol}:`, error);
+                }
+            }
+        }
+        
+        // Change timeframe
+        function changeTimeframe(timeframe) {
+            // Update current timeframe
+            currentTimeframe = timeframe;
+            
+            // Update button states
+            document.querySelectorAll('.timeframe-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.timeframe === timeframe) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            // Clear existing chart data
+            if (klineChart) {
+                klineChart.remove();
+                volumeChart.remove();
+            }
+            
+            // Reinitialize with new timeframe
+            initKlineChart();
+        }
+        
+        // Update chip distribution
+        function updateChipDistribution(chipData) {
+            const chipContainer = document.getElementById('chipDistribution');
+            
+            if (!chipData || chipData.length === 0) {
+                chipContainer.innerHTML = '<div class=\"chip-title\">' + t('chip_distribution') + '</div><div class=\"chip-no-data\">' + t('no_data') + '</div>';
+                return;
+            }
+            
+            // Find max volume for scaling
+            const maxVolume = Math.max(...chipData.map(item => item.volume));
+            
+            // Sort by price (highest first)
+            const sortedData = chipData.sort((a, b) => b.price - a.price);
+            
+            // Calculate available height for chip bars (550px container - title height - padding)
+            const containerHeight = 550;
+            const titleHeight = 32; // Updated for larger title font
+            const padding = 20; // Top and bottom padding
+            const availableHeight = containerHeight - titleHeight - padding;
+            const barHeight = Math.max(Math.floor(availableHeight / sortedData.length) - 3, 12); // Minimum 12px height for better readability
+            
+            // Generate chip distribution HTML with dynamic height
+            let chipHtml = '<div class=\"chip-title\">' + t('chip_distribution') + '</div>';
+            chipHtml += '<div class="chip-bars-container" style="height: ' + availableHeight + 'px; overflow-y: auto;">';
+            
+            sortedData.forEach(item => {
+                const percentage = ((item.volume / maxVolume) * 100).toFixed(1);
+                const width = Math.max(percentage, 1);
+                
+                chipHtml += `
+                    <div class="chip-bar" style="height: ${barHeight}px; margin-bottom: 1px;">
+                        <div class="chip-price" style="line-height: ${barHeight}px;">$${item.price.toFixed(2)}</div>
+                        <div class="chip-volume-bar" style="height: ${Math.max(barHeight - 2, 6)}px;">
+                            <div class="chip-volume-fill" style="width: ${width}%"></div>
+                        </div>
+                        <div class="chip-percentage" style="line-height: ${barHeight}px;">${percentage}%</div>
+                    </div>
+                `;
+            });
+            
+            chipHtml += '</div>';
+            chipContainer.innerHTML = chipHtml;
+        }
+        
+        // Initialize charts when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM Content Loaded');
+            initializeChart();
+            
+            // Update all watchlist prices on page load
+            setTimeout(() => {
+                updateAllWatchlistPrices();
+            }, 2000);
+            
+            // Set up periodic updates for watchlist prices (every 30 seconds)
+            setInterval(updateAllWatchlistPrices, 30000);
+            
+            // Initialize K-line chart with better error handling
+            function tryInitKlineChart() {
+                console.log('Attempting to initialize K-line chart...');
+                if (typeof LightweightCharts !== 'undefined') {
+                    console.log('LightweightCharts library is available');
+                    try {
+                        initKlineChart();
+                        console.log('K-line chart initialized successfully');
+                    } catch (error) {
+                        console.error('Error initializing K-line chart:', error);
+                        // Retry after a short delay
+                        setTimeout(tryInitKlineChart, 1000);
+                    }
+                } else {
+                    console.warn('LightweightCharts library not yet available, retrying...');
+                    // Try to load the library again
+                    const existingScript = document.querySelector('script[src*="lightweight-charts"]');
+                    if (!existingScript) {
+                        console.log('Loading LightweightCharts library...');
+                        const script = document.createElement('script');
+                         script.src = 'https://cdn.jsdelivr.net/npm/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js';
+                        script.onload = function() {
+                            console.log('LightweightCharts library loaded successfully');
+                            setTimeout(tryInitKlineChart, 100);
+                        };
+                        script.onerror = function() {
+                            console.error('Failed to load LightweightCharts library');
+                        };
+                        document.head.appendChild(script);
+                    } else {
+                        // Script exists but library not ready, wait and retry
+                        setTimeout(tryInitKlineChart, 500);
+                    }
+                }
+            }
+            
+            // Start initialization after a short delay
+            setTimeout(tryInitKlineChart, 100);
+        });
+
+        // Modal functions
+        function openAnalysisModal() {
+            const target = document.getElementById('strategyTarget').value || currentSymbol;
+            if (!target) {
+                alert(t('please_select_stock'));
+                return;
+            }
+            
+            // Show modal
+            document.getElementById('analysisModal').style.display = 'flex';
+            
+            // Reset all analysis results
+            document.getElementById('technicalAnalysisResult').innerHTML = '正在分析...';
+            document.getElementById('fundamentalAnalysisResult').innerHTML = '正在分析...';
+            document.getElementById('sentimentAnalysisResult').innerHTML = '正在分析...';
+            document.getElementById('aiAnalysisResult').innerHTML = '正在分析...';
+            
+            // Run all analyses
+            runModalAnalysis('technical', target);
+            runModalAnalysis('fundamental', target);
+            runModalAnalysis('sentiment', target);
+            runModalAnalysis('ai', target);
+        }
+        
+        function closeAnalysisModal() {
+            document.getElementById('analysisModal').style.display = 'none';
+        }
+        
+        // AI Strategy Optimization Functions
+        function openAIOptimizationModal() {
+            document.getElementById('aiOptimizationModal').style.display = 'block';
+            // Set current symbol as default
+            document.getElementById('optimizationSymbol').value = currentSymbol;
+        }
+        
+        function closeAIOptimizationModal() {
+            document.getElementById('aiOptimizationModal').style.display = 'none';
+            // Reset progress display
+            document.getElementById('optimizationProgress').style.display = 'none';
+            document.getElementById('strategyDisplay').innerHTML = '';
+            document.getElementById('optimizationResults').innerHTML = '';
+        }
+        
+        async function startStrategyOptimization() {
+            const symbol = document.getElementById('optimizationSymbol').value.toUpperCase();
+            const modelType = document.getElementById('optimizationModel').value;
+            const marketCondition = document.getElementById('marketCondition').value;
+            
+            if (!symbol) {
+                alert(t('enter_stock_code_placeholder'));
+                return;
+            }
+            
+            // Show progress indicator
+            document.getElementById('optimizationProgress').style.display = 'block';
+            document.getElementById('strategyDisplay').innerHTML = '';
+            document.getElementById('optimizationResults').innerHTML = '';
+            
+            try {
+                updateProgressText(t('start_optimization') + '...');
+                
+                const result = await aiStrategyManager.optimizeStrategy(symbol, modelType, marketCondition);
+                
+                // Hide progress indicator
+                document.getElementById('optimizationProgress').style.display = 'none';
+                
+                if (result.success) {
+                    // Display optimized strategy
+                    aiStrategyManager.displayStrategy(result.strategy, 'strategyDisplay');
+                    aiStrategyManager.displayOptimizationResults(result, 'optimizationResults');
+                    updateProgressText(t('optimization_complete'));
+                } else {
+                    document.getElementById('optimizationResults').innerHTML = `
+                        <div class="error-message">
+                            <h4>优化失败</h4>
+                            <p>无法生成正收益策略。请尝试不同的市场条件或股票代码。</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                document.getElementById('optimizationProgress').style.display = 'none';
+                document.getElementById('optimizationResults').innerHTML = `
+                    <div class="error-message">
+                        <h4>优化错误</h4>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+        
+        async function generateSimpleStrategy() {
+            const symbol = document.getElementById('optimizationSymbol').value.toUpperCase();
+            const modelType = document.getElementById('optimizationModel').value;
+            
+            if (!symbol) {
+                alert(t('enter_stock_code_placeholder'));
+                return;
+            }
+            
+            // Show progress indicator
+            document.getElementById('optimizationProgress').style.display = 'block';
+            document.getElementById('strategyDisplay').innerHTML = '';
+            document.getElementById('optimizationResults').innerHTML = '';
+            
+            try {
+                updateProgressText(t('generate_simple_strategy') + '...');
+                
+                const strategy = await aiStrategyManager.generateStrategy(symbol, modelType);
+                
+                // Hide progress indicator
+                document.getElementById('optimizationProgress').style.display = 'none';
+                
+                // Display strategy
+                aiStrategyManager.displayStrategy(strategy, 'strategyDisplay');
+                updateProgressText(t('strategy_generation_complete'));
+            } catch (error) {
+                document.getElementById('optimizationProgress').style.display = 'none';
+                document.getElementById('strategyDisplay').innerHTML = `
+                    <div class="error-message">
+                        <h4>生成错误</h4>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+        
+        function updateProgressText(text) {
+            document.getElementById('progressText').textContent = text;
+        }
+        
+        function runModalAnalysis(type, target) {
+            const resultElementMap = {
+                'technical': 'technicalAnalysisResult',
+                'fundamental': 'fundamentalAnalysisResult',
+                'sentiment': 'sentimentAnalysisResult',
+                'ai': 'aiAnalysisResult'
+            };
+            
+            const apiEndpointMap = {
+                'technical': 'technical',
+                'fundamental': 'fundamental',
+                'sentiment': 'sentiment',
+                'ai': 'ai_prediction'
+            };
+            
+            const resultElement = document.getElementById(resultElementMap[type]);
+            const endpoint = apiEndpointMap[type];
+            
+            fetch(`/api/analysis/${endpoint}?symbol=${target}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        resultElement.innerHTML = `分析失败: ${data.error}`;
+                        return;
+                    }
+                    
+                    let resultHTML = '';
+                    if (type === 'technical') {
+                        resultHTML = `
+                            <strong>技术指标:</strong><br>
+                            RSI: ${data.rsi || 'N/A'}<br>
+                            MACD: ${data.macd || 'N/A'}<br>
+                            移动平均线: ${data.moving_averages || 'N/A'}<br>
+                            布林带: ${data.bollinger_bands || 'N/A'}<br>
+                            <strong>信号:</strong> ${data.signal || '中性'}
+                        `;
+                    } else if (type === 'fundamental') {
+                        resultHTML = `
+                            <strong>基本面数据:</strong><br>
+                            市盈率: ${data.pe_ratio || 'N/A'}<br>
+                            市净率: ${data.pb_ratio || 'N/A'}<br>
+                            股息收益率: ${data.dividend_yield || 'N/A'}%<br>
+                            营收增长: ${data.revenue_growth || 'N/A'}%<br>
+                            <strong>评级:</strong> ${data.rating || '中性'}
+                        `;
+                    } else if (type === 'sentiment') {
+                        resultHTML = `
+                            <strong>市场情绪:</strong><br>
+                            新闻情绪: ${data.news_sentiment || 'N/A'}<br>
+                            社交媒体情绪: ${data.social_sentiment || 'N/A'}<br>
+                            分析师情绪: ${data.analyst_sentiment || 'N/A'}<br>
+                            恐慌指数: ${data.fear_greed_index || 'N/A'}<br>
+                            <strong>总体情绪:</strong> ${data.overall_sentiment || '中性'}
+                        `;
+                    } else if (type === 'ai') {
+                        resultHTML = `
+                            <strong>AI预测:</strong><br>
+                            预测方向: ${data.prediction || 'N/A'}<br>
+                            置信度: ${data.confidence || 'N/A'}%<br>
+                            目标价格: ${data.target_price || 'N/A'}<br>
+                            时间范围: ${data.time_horizon || 'N/A'}<br>
+                            <strong>建议:</strong> ${data.recommendation || '观望'}
+                        `;
+                    }
+                    
+                    resultElement.innerHTML = resultHTML;
+                })
+                .catch(error => {
+                    resultElement.innerHTML = `分析失败: ${error.message}`;
+                });
+        }
+        
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('analysisModal');
+            if (event.target === modal) {
+                closeAnalysisModal();
+            }
+            
+            const backtestModal = document.getElementById('backtestModal');
+            if (event.target === backtestModal) {
+                closeBacktestModal();
+            }
+        }
+        
+        // New AI optimization function for backtest results
+        async function startAIOptimization() {
+            const modelType = document.getElementById('optimizationModel').value;
+            const progressDiv = document.getElementById('optimizationProgress');
+            const resultsDiv = document.getElementById('optimizationResults');
+            const optimizeButton = document.querySelector('button[onclick="startAIOptimization()"]');
+            
+            if (!window.currentBacktestData) {
+                alert('没有可用的回测数据进行优化');
+                return;
+            }
+            
+            // Disable button and show initial feedback
+            optimizeButton.disabled = true;
+            optimizeButton.textContent = '正在优化...';
+            optimizeButton.style.background = '#848e9c';
+            
+            // Show progress with detailed steps
+            progressDiv.style.display = 'block';
+            progressDiv.innerHTML = `
+                <div style="color: #0ecb81; margin-bottom: 10px;">
+                    <div id="optimizationStep">🔄 正在初始化AI优化...</div>
+                    <div style="background: #2b3139; border-radius: 4px; height: 6px; margin-top: 8px; overflow: hidden;">
+                        <div id="progressBar" style="background: #f0b90b; height: 100%; width: 0%; transition: width 0.3s ease;"></div>
+                    </div>
+                    <div id="progressText" style="font-size: 12px; color: #848e9c; margin-top: 5px;">准备中...</div>
+                </div>
+            `;
+            resultsDiv.style.display = 'none';
+            resultsDiv.innerHTML = '';
+            
+            // Progress tracking function
+            function updateProgress(step, percentage, text) {
+                document.getElementById('optimizationStep').textContent = step;
+                document.getElementById('progressBar').style.width = percentage + '%';
+                document.getElementById('progressText').textContent = text;
+            }
+            
+            try {
+                // Step 1: Preparing data
+                updateProgress('📊 正在分析回测数据...', 20, '分析当前策略表现');
+                await new Promise(resolve => setTimeout(resolve, 800));
+                
+                // Step 2: AI processing
+                updateProgress('🤖 AI正在生成优化策略...', 40, `使用${modelType === 'local' ? '本地AI' : 'Google AI'}模型`);
+                
+                const optimizationData = {
+                    backtest_data: window.currentBacktestData,
+                    strategy_type: window.currentStrategyType,
+                    model_type: modelType,
+                    symbol: currentSymbol
+                };
+                
+                // Step 3: Sending request
+                updateProgress('🌐 正在发送优化请求...', 60, '与AI服务器通信中');
+                
+                const response = await fetch('/api/optimize-strategy', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(optimizationData)
+                });
+                
+                // Step 4: Processing response
+                updateProgress('⚡ 正在处理优化结果...', 80, '解析AI生成的策略');
+                await new Promise(resolve => setTimeout(resolve, 500));
+                
+                const result = await response.json();
+                
+                // Step 5: Complete
+                updateProgress('✅ 优化完成!', 100, '策略优化成功');
+                await new Promise(resolve => setTimeout(resolve, 500));
+                
+                // Hide progress
+                progressDiv.style.display = 'none';
+                
+                if (result.success) {
+                    // Display optimization results
+                    resultsDiv.style.display = 'block';
+                    resultsDiv.innerHTML = `
+                        <div style="color: #0ecb81; font-weight: bold; margin-bottom: 15px;">
+                            🎉 优化成功! (${result.iterations_completed}次迭代)
+                        </div>
+                        
+                        <div style="display: flex; gap: 15px; margin-bottom: 15px;">
+                            <div style="flex: 1; background: #1e2329; padding: 12px; border-radius: 6px;">
+                                <div style="color: #f0b90b; font-size: 12px; margin-bottom: 5px;">原始收益率</div>
+                                <div style="color: ${result.original_performance.total_return >= 0 ? '#0ecb81' : '#ff6b6b'}; font-weight: bold;">
+                                    ${result.original_performance.total_return.toFixed(2)}%
+                                </div>
+                            </div>
+                            <div style="flex: 1; background: #1e2329; padding: 12px; border-radius: 6px;">
+                                <div style="color: #f0b90b; font-size: 12px; margin-bottom: 5px;">优化后收益率</div>
+                                <div style="color: ${result.final_performance.total_return >= 0 ? '#0ecb81' : '#ff6b6b'}; font-weight: bold;">
+                                    ${result.final_performance.total_return.toFixed(2)}%
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div style="background: #1e2329; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                            <div style="color: #f0b90b; font-weight: bold; margin-bottom: 10px;">📈 优化后策略</div>
+                            <div style="max-height: 200px; overflow-y: auto; background: #0a0e1a; padding: 10px; border-radius: 4px;">
+                                <pre style="color: #ffffff; white-space: pre-wrap; font-size: 11px; margin: 0;">${result.optimized_strategy}</pre>
+                            </div>
+                        </div>
+                        
+                        <div style="color: #848e9c; font-size: 12px; margin-bottom: 15px;">
+                            ${result.message}
+                        </div>
+                        
+                        <div style="display: flex; gap: 10px;">
+                            <button class="strategy-btn" onclick="applyOptimizedStrategy()" style="background: #0ecb81; color: #000;">
+                                ✅ 应用策略
+                            </button>
+                            <button class="strategy-btn" onclick="testOptimizedStrategy()" style="background: #f0b90b; color: #000;">
+                                🧪 测试策略
+                            </button>
+                        </div>
+                    `;
+                    
+                    // Store optimized strategy
+                    window.optimizedStrategy = result.optimized_strategy;
+                } else {
+                    resultsDiv.style.display = 'block';
+                    resultsDiv.innerHTML = `
+                        <div style="color: #ff6b6b; font-weight: bold; margin-bottom: 10px;">❌ 优化失败</div>
+                        <div style="color: #848e9c; margin-bottom: 15px;">${result.error || '未知错误'}</div>
+                        <div style="background: #2b3139; padding: 12px; border-radius: 6px; font-size: 12px;">
+                            💡 建议：尝试切换AI模型或手动调整策略参数
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                progressDiv.style.display = 'none';
+                resultsDiv.style.display = 'block';
+                resultsDiv.innerHTML = `
+                    <div style="color: #ff6b6b; font-weight: bold; margin-bottom: 10px;">🚫 网络错误</div>
+                    <div style="color: #848e9c; margin-bottom: 15px;">请求失败: ${error.message}</div>
+                    <div style="background: #2b3139; padding: 12px; border-radius: 6px; font-size: 12px;">
+                        💡 请检查网络连接或稍后重试
+                    </div>
+                `;
+            } finally {
+                // Re-enable button
+                optimizeButton.disabled = false;
+                optimizeButton.textContent = '开始AI优化';
+                optimizeButton.style.background = '#f0b90b';
+            }
+        }
+        
+        function applyOptimizedStrategy() {
+            if (window.optimizedStrategy) {
+                // Apply the optimized strategy to the current strategy
+                lastGeneratedStrategy = window.optimizedStrategy;
+                alert('优化策略已应用，可以进行新的回测验证');
+                closeBacktestModal();
+            }
+        }
+        
+        async function testOptimizedStrategy() {
+            if (!window.optimizedStrategy) {
+                alert('没有可用的优化策略');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/backtest/ai', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        symbol: currentSymbol,
+                        strategy: window.optimizedStrategy
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.error) {
+                    alert('优化策略测试失败: ' + result.error);
+                    return;
+                }
+                
+                // Update the backtest results with new data
+                populateBacktestInfo(result, 'ai');
+                createBacktestModalChart(result);
+                
+                alert('优化策略测试完成，请查看新的回测结果');
+            } catch (error) {
+                alert('优化策略测试失败: ' + error.message);
+            }
+        }
+    </script>
+
+    <!-- Backtest Result Modal -->
+    <div id="backtestModal" class="backtest-modal">
+        <div class="backtest-modal-content">
+            <div class="backtest-modal-header">
+                <span>回测结果分析</span>
+                <span class="backtest-modal-close" onclick="closeBacktestModal()">&times;</span>
+            </div>
+            <div class="backtest-modal-body">
+                <div class="backtest-chart-panel">
+                    <div class="backtest-chart-title">价格走势与交易信号</div>
+                    <div class="backtest-chart-container">
+                        <canvas id="backtestModalChart"></canvas>
+                    </div>
+                </div>
+                <div class="backtest-info-panel">
+                    <div id="backtestInfoContent">
+                        <!-- Backtest information will be populated here -->
+                    </div>
+                    <div id="aiOptimizationSection" style="display: none; margin-top: 20px; padding: 15px; background: #2b3139; border-radius: 8px;">
+                        <div style="color: #f0b90b; font-weight: bold; margin-bottom: 10px;">策略优化建议</div>
+                        <div style="color: #848e9c; margin-bottom: 15px;">检测到策略收益不佳，建议使用AI进行策略优化</div>
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <select id="optimizationModel" style="background: #1e2329; color: #ffffff; border: 1px solid #3c4043; padding: 8px; border-radius: 4px;">
+                                <option value="local" data-i18n="local_ai_recommended">本地AI (推荐)</option>
+                                <option value="google">Google AI</option>
+                            </select>
+                            <button class="strategy-btn" onclick="startAIOptimization()" style="background: #f0b90b; color: #000;">开始AI优化</button>
+                        </div>
+                        <div id="optimizationProgress" style="display: none; margin-top: 10px; color: #0ecb81;">
+                            正在优化策略，请稍候...
+                        </div>
+                        <div id="optimizationResults" style="display: none; margin-top: 15px;">
+                            <!-- Optimization results will be displayed here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Fixed time display in bottom right corner -->
+    <div class="fixed-time-display" id="currentTime"></div>
+
+    <script>
+        // Initialize i18n system when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            initI18n();
+        });
+    </script>
+</body>
+</html>

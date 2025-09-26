@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-i18n="trading_ai_dashboard">Trading AI - Stock Analysis</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="/static/js/i18n.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0e1a;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: #1e2329;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 18px;
+            font-weight: bold;
+            color: #f0b90b;
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .language-toggle {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background: #2b3139;
+            border: 1px solid #404040;
+            border-radius: 20px;
+            padding: 6px 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 12px;
+            color: #ffffff;
+        }
+        
+        .language-toggle:hover {
+            border-color: #f0b90b;
+            background: #3a3f4a;
+        }
+        
+        .globe-icon {
+            font-size: 14px;
+        }
+        
+        .lang-text {
+            font-weight: 500;
+            min-width: 20px;
+            text-align: center;
+        }
+        
+        .language-selector select {
+            background: #2b3139;
+            color: #ffffff;
+            border: 1px solid #404040;
+            border-radius: 4px;
+            padding: 5px 10px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        
+        .language-selector select:hover {
+            border-color: #f0b90b;
+        }
+        
+        .stock-info {
+            background: #1e2329;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .stock-title {
+            font-size: 24px;
+            color: #f0b90b;
+            margin-bottom: 10px;
+        }
+        
+        .stock-price {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .stock-change {
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+        
+        .positive { color: #02c076; }
+        .negative { color: #f84960; }
+        
+        .chart-container {
+            background: #1e2329;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .chart-title {
+            font-size: 18px;
+            color: #f0b90b;
+            margin-bottom: 15px;
+        }
+        
+        .back-btn {
+            background: #f0b90b;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .back-btn:hover {
+            background: #d4a017;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo-container">
+                <div class="logo" data-i18n="trading_ai_dashboard">🚀 Trading AI Dashboard</div>
+                <div class="language-toggle" onclick="toggleLanguage()">
+                    <span class="globe-icon">🌐</span>
+                    <span class="lang-text" id="currentLangText">EN</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="stock-info">
+            <div class="stock-title" id="stockSymbol">AAPL</div>
+            <div class="stock-price" id="stockPrice">$150.25</div>
+            <div class="stock-change positive" id="stockChange">+1.25 (+0.84%)</div>
+            <a href="/" class="back-btn" data-i18n="back_to_dashboard">返回仪表板</a>
+        </div>
+        
+        <div class="chart-container">
+            <div class="chart-title" data-i18n="price_chart">价格走势图</div>
+            <canvas id="stockChart" width="400" height="200"></canvas>
+        </div>
+    </div>
+    
+    <script>
+        // Initialize i18n system when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            initI18n();
+            loadStockData();
+        });
+        
+        function loadStockData() {
+            // Get stock symbol from URL parameters
+            const urlParams = new URLSearchParams(window.location.search);
+            const symbol = urlParams.get('symbol') || 'AAPL';
+            
+            // Update page with stock data
+            document.getElementById('stockSymbol').textContent = symbol;
+            
+            // Load chart data (placeholder implementation)
+            const ctx = document.getElementById('stockChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [{
+                        label: symbol,
+                        data: [150, 155, 148, 162, 159, 165],
+                        borderColor: '#f0b90b',
+                        backgroundColor: 'rgba(240, 185, 11, 0.1)',
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: '#ffffff'
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: {
+                                color: '#848e9c'
+                            },
+                            grid: {
+                                color: '#2b3139'
+                            }
+                        },
+                        y: {
+                            ticks: {
+                                color: '#848e9c'
+                            },
+                            grid: {
+                                color: '#2b3139'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
