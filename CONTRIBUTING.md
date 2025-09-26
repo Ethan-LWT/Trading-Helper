@@ -27,7 +27,7 @@ Thank you for your interest in contributing to Trading AI Dashboard! This docume
 
 1. **Fork the repository**
    ```bash
-   git clone https://github.com/yourusername/Trading_AI.git
+   git clone https://github.com/Ethan-LWT/Trading-Helper.git
    cd Trading_AI
    ```
 
