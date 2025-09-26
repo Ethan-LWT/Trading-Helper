@@ -1,4 +1,4 @@
-# 🚀 Trading AI Dashboard
+# 🚀 Trading-Helper
 
 A comprehensive AI-powered trading platform that combines multiple data sources, advanced technical analysis, and artificial intelligence to generate and optimize trading strategies.
 
@@ -41,6 +41,23 @@ A comprehensive AI-powered trading platform that combines multiple data sources,
 - **Strategy Monitoring**: Live strategy performance tracking
 - **Push Notifications**: Configurable alert system
 
+## 📸 Screenshots
+
+### Main Dashboard
+The main dashboard provides an overview of your trading portfolio and market data with a modern, dark-themed interface.
+
+![Main Dashboard](screenshots/main-dashboard.png)
+
+### Stock Analysis
+Detailed stock analysis page with real-time data, technical indicators, and interactive charts.
+
+![Stock Analysis](screenshots/stock-analysis.png)
+
+### AI Strategy Generation
+AI-powered strategy generation interface where you can create and optimize trading strategies.
+
+![AI Strategy](screenshots/ai-strategy.png)
+
 ## 🛠️ Installation
 
 ### Prerequisites
@@ -53,7 +70,7 @@ A comprehensive AI-powered trading platform that combines multiple data sources,
 1. **Clone the repository**
    ```bash
    git clone https://github.com/Ethan-LWT/Trading-Helper.git
-   cd Trading_AI
+   cd Trading-Helper
    ```
 
 2. **Install dependencies**
@@ -122,7 +139,7 @@ A comprehensive AI-powered trading platform that combines multiple data sources,
 ## 🏗️ Project Structure
 
 ```
-Trading_AI/
+Trading-Helper/
 ├── ai_models/              # AI model implementations
 │   ├── google_ai.py       # Google AI integration
 │   └── local_ai.py        # Local Ollama integration
@@ -275,9 +292,9 @@ This software is for educational and research purposes only. It is not intended 
 
 ## 🆘 Support
 
-- **Documentation**: Check the [Wiki](https://github.com/yourusername/Trading_AI/wiki)
-- **Issues**: Report bugs on [GitHub Issues](https://github.com/yourusername/Trading_AI/issues)
-- **Discussions**: Join our [GitHub Discussions](https://github.com/yourusername/Trading_AI/discussions)
+- **Documentation**: Check the [Wiki](https://github.com/Ethan-LWT/Trading-Helper/wiki)
+- **Issues**: Report bugs on [GitHub Issues](https://github.com/Ethan-LWT/Trading-Helper/issues)
+- **Discussions**: Join our [GitHub Discussions](https://github.com/Ethan-LWT/Trading-Helper/discussions)
 
 ## 🙏 Acknowledgments
 

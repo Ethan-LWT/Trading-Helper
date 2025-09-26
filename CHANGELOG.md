@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to Trading AI Dashboard will be documented in this file.
+All notable changes to Trading-Helper will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- Initial release of Trading AI Dashboard
+- Initial release of Trading-Helper
 - Multi-source data integration (yfinance, Alpha Vantage, Polygon.io, etc.)
 - AI-powered strategy generation using Google AI and local Ollama
 - Multi-timeframe trading strategies (daily, 3-day, weekly, bi-weekly, monthly)
@@ -44,7 +44,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Release Notes
 
 ### Version 1.0.0
-This is the initial release of Trading AI Dashboard, featuring a complete AI-powered trading platform with:
+This is the initial release of Trading-Helper, featuring a complete AI-powered trading platform with:
 
 - **Multi-Source Data**: Integration with multiple financial data providers
 - **AI Strategy Generation**: Advanced AI models for strategy creation and optimization

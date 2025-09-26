@@ -1,13 +1,13 @@
 /**
- * Internationalization (i18n) module for Trading AI Dashboard
- * Supports Chinese and English language switching
+ * Internationalization (i18n) module for Trading-Helper
+ * Supports Chinese and English languages
  */
 
 // Language translations
 const translations = {
     zh: {
         // Header and Navigation
-        'trading_ai_dashboard': 'Trading AI 仪表板',
+        'trading_helper': 'Trading-Helper 交易助手',
         'push_notifications': '推送功能',
         'watchlist_title': '自选股票',
         'remove_stock': '删除股票',
@@ -180,7 +180,8 @@ const translations = {
     
     en: {
         // Header and Navigation
-        'trading_ai_dashboard': 'Trading AI Dashboard',
+        'trading_helper': 'Trading-Helper',
+        'trading_helper_stock': 'Trading-Helper - Stock Analysis',
         'push_notifications': 'Push Notifications',
         'watchlist_title': 'Watchlist',
         'remove_stock': 'Remove Stock',
@@ -347,7 +348,7 @@ const translations = {
 };
 
 // Current language (default: Chinese)
-let currentLanguage = localStorage.getItem('trading_ai_language') || 'zh';
+let currentLanguage = localStorage.getItem('trading_helper_language') || 'zh';
 
 /**
  * Get translation for a key
@@ -395,7 +396,7 @@ function switchLanguage(lang) {
     }
     
     currentLanguage = lang;
-    localStorage.setItem('trading_ai_language', lang);
+    localStorage.setItem('trading_helper_language', lang);
     
     // Update all translatable elements
     updatePageTranslations();

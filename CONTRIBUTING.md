@@ -1,6 +1,6 @@
-# Contributing to Trading AI Dashboard
+# Contributing to Trading-Helper
 
-Thank you for your interest in contributing to Trading AI Dashboard! This document provides guidelines and information for contributors.
+Thank you for your interest in contributing to Trading-Helper! This document provides guidelines and information for contributors.
 
 ## 🤝 How to Contribute
 
@@ -28,7 +28,7 @@ Thank you for your interest in contributing to Trading AI Dashboard! This docume
 1. **Fork the repository**
    ```bash
    git clone https://github.com/Ethan-LWT/Trading-Helper.git
-   cd Trading_AI
+   cd Trading-Helper
    ```
 
 2. **Create a virtual environment**
@@ -264,8 +264,8 @@ Contributors will be recognized in:
 
 ## 📄 License
 
-By contributing to Trading AI Dashboard, you agree that your contributions will be licensed under the MIT License.
+By contributing to Trading-Helper, you agree that your contributions will be licensed under the MIT License.
 
----
+## 🎉 Recognition
 
-Thank you for contributing to Trading AI Dashboard! 🚀
+Thank you for contributing to Trading-Helper! 🚀
