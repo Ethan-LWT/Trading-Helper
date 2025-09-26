@@ -1,0 +1,102 @@
+<svg width="1200" height="800" viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="1200" height="800" fill="#0f1419"/>
+  
+  <!-- Header -->
+  <rect x="0" y="0" width="1200" height="60" fill="#1a1f2e"/>
+  <text x="20" y="35" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="#00d4aa">🚀 Trading-Helper</text>
+  <text x="1050" y="35" font-family="Arial, sans-serif" font-size="14" fill="#8892b0">EN | 中文</text>
+  
+  <!-- Sidebar -->
+  <rect x="0" y="60" width="250" height="740" fill="#1a1f2e"/>
+  <text x="20" y="100" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#ccd6f6">导航菜单</text>
+  <rect x="10" y="120" width="230" height="40" rx="5" fill="#00d4aa" opacity="0.2"/>
+  <text x="25" y="145" font-family="Arial, sans-serif" font-size="14" fill="#00d4aa">📊 仪表板</text>
+  <text x="25" y="185" font-family="Arial, sans-serif" font-size="14" fill="#8892b0">📈 股票分析</text>
+  <text x="25" y="225" font-family="Arial, sans-serif" font-size="14" fill="#8892b0">🤖 AI策略</text>
+  <text x="25" y="265" font-family="Arial, sans-serif" font-size="14" fill="#8892b0">📋 回测</text>
+  <text x="25" y="305" font-family="Arial, sans-serif" font-size="14" fill="#8892b0">⚡ 监控</text>
+  
+  <!-- Main Content Area -->
+  <rect x="250" y="60" width="950" height="740" fill="#0f1419"/>
+  
+  <!-- Welcome Section -->
+  <text x="280" y="100" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#ccd6f6">欢迎使用 Trading-Helper</text>
+  <text x="280" y="130" font-family="Arial, sans-serif" font-size="14" fill="#8892b0">AI驱动的综合交易平台</text>
+  
+  <!-- Stats Cards -->
+  <rect x="280" y="160" width="200" height="120" rx="8" fill="#1a1f2e" stroke="#00d4aa" stroke-width="1"/>
+  <text x="295" y="185" font-family="Arial, sans-serif" font-size="12" fill="#8892b0">总资产</text>
+  <text x="295" y="210" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#00d4aa">$125,430</text>
+  <text x="295" y="235" font-family="Arial, sans-serif" font-size="12" fill="#00d4aa">+2.34%</text>
+  
+  <rect x="500" y="160" width="200" height="120" rx="8" fill="#1a1f2e" stroke="#ff6b6b" stroke-width="1"/>
+  <text x="515" y="185" font-family="Arial, sans-serif" font-size="12" fill="#8892b0">今日盈亏</text>
+  <text x="515" y="210" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#ff6b6b">-$1,234</text>
+  <text x="515" y="235" font-family="Arial, sans-serif" font-size="12" fill="#ff6b6b">-0.98%</text>
+  
+  <rect x="720" y="160" width="200" height="120" rx="8" fill="#1a1f2e" stroke="#4ecdc4" stroke-width="1"/>
+  <text x="735" y="185" font-family="Arial, sans-serif" font-size="12" fill="#8892b0">活跃策略</text>
+  <text x="735" y="210" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#4ecdc4">8</text>
+  <text x="735" y="235" font-family="Arial, sans-serif" font-size="12" fill="#4ecdc4">运行中</text>
+  
+  <rect x="940" y="160" width="200" height="120" rx="8" fill="#1a1f2e" stroke="#ffd93d" stroke-width="1"/>
+  <text x="955" y="185" font-family="Arial, sans-serif" font-size="12" fill="#8892b0">胜率</text>
+  <text x="955" y="210" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#ffd93d">67.8%</text>
+  <text x="955" y="235" font-family="Arial, sans-serif" font-size="12" fill="#ffd93d">本月</text>
+  
+  <!-- Chart Area -->
+  <rect x="280" y="300" width="640" height="300" rx="8" fill="#1a1f2e" stroke="#2d3748" stroke-width="1"/>
+  <text x="295" y="325" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#ccd6f6">资产走势图</text>
+  
+  <!-- Mock Chart -->
+  <polyline points="300,580 320,560 340,540 360,520 380,500 400,480 420,460 440,440 460,420 480,400 500,380 520,360 540,340 560,320 580,300 600,280 620,260 640,240 660,220 680,200 700,180 720,160 740,140 760,120 780,100 800,80 820,60 840,40 860,20 880,0" 
+            fill="none" stroke="#00d4aa" stroke-width="2" transform="translate(0,320)"/>
+  
+  <!-- Grid lines -->
+  <g stroke="#2d3748" stroke-width="0.5" opacity="0.3">
+    <line x1="300" y1="320" x2="900" y2="320"/>
+    <line x1="300" y1="370" x2="900" y2="370"/>
+    <line x1="300" y1="420" x2="900" y2="420"/>
+    <line x1="300" y1="470" x2="900" y2="470"/>
+    <line x1="300" y1="520" x2="900" y2="520"/>
+    <line x1="300" y1="570" x2="900" y2="570"/>
+  </g>
+  
+  <!-- Recent Activity -->
+  <rect x="940" y="300" width="240" height="300" rx="8" fill="#1a1f2e" stroke="#2d3748" stroke-width="1"/>
+  <text x="955" y="325" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#ccd6f6">最近活动</text>
+  
+  <rect x="950" y="340" width="220" height="30" rx="4" fill="#0f1419"/>
+  <text x="960" y="360" font-family="Arial, sans-serif" font-size="12" fill="#8892b0">买入 AAPL 100股</text>
+  <text x="1120" y="360" font-family="Arial, sans-serif" font-size="12" fill="#00d4aa">+2.1%</text>
+  
+  <rect x="950" y="380" width="220" height="30" rx="4" fill="#0f1419"/>
+  <text x="960" y="400" font-family="Arial, sans-serif" font-size="12" fill="#8892b0">卖出 TSLA 50股</text>
+  <text x="1120" y="400" font-family="Arial, sans-serif" font-size="12" fill="#ff6b6b">-1.5%</text>
+  
+  <rect x="950" y="420" width="220" height="30" rx="4" fill="#0f1419"/>
+  <text x="960" y="440" font-family="Arial, sans-serif" font-size="12" fill="#8892b0">AI策略触发</text>
+  <text x="1120" y="440" font-family="Arial, sans-serif" font-size="12" fill="#4ecdc4">执行</text>
+  
+  <!-- Market Status -->
+  <rect x="280" y="620" width="640" height="160" rx="8" fill="#1a1f2e" stroke="#2d3748" stroke-width="1"/>
+  <text x="295" y="645" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#ccd6f6">市场概览</text>
+  
+  <!-- Market indicators -->
+  <text x="300" y="675" font-family="Arial, sans-serif" font-size="14" fill="#8892b0">S&P 500</text>
+  <text x="400" y="675" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#00d4aa">4,567.89</text>
+  <text x="500" y="675" font-family="Arial, sans-serif" font-size="12" fill="#00d4aa">+1.23%</text>
+  
+  <text x="300" y="705" font-family="Arial, sans-serif" font-size="14" fill="#8892b0">NASDAQ</text>
+  <text x="400" y="705" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#ff6b6b">14,234.56</text>
+  <text x="500" y="705" font-family="Arial, sans-serif" font-size="12" fill="#ff6b6b">-0.45%</text>
+  
+  <text x="300" y="735" font-family="Arial, sans-serif" font-size="14" fill="#8892b0">道琼斯</text>
+  <text x="400" y="735" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#4ecdc4">34,567.12</text>
+  <text x="500" y="735" font-family="Arial, sans-serif" font-size="12" fill="#4ecdc4">+0.78%</text>
+  
+  <!-- Status indicator -->
+  <circle cx="1150" cy="750" r="8" fill="#00d4aa"/>
+  <text x="1100" y="755" font-family="Arial, sans-serif" font-size="12" fill="#00d4aa">市场开放</text>
+</svg>

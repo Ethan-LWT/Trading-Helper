@@ -1,0 +1,162 @@
+<svg width="1200" height="800" viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="1200" height="800" fill="#0f1419"/>
+  
+  <!-- Header -->
+  <rect x="0" y="0" width="1200" height="60" fill="#1a1f2e"/>
+  <text x="20" y="35" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="#00d4aa">🚀 Trading-Helper - 股票分析</text>
+  <text x="1050" y="35" font-family="Arial, sans-serif" font-size="14" fill="#8892b0">EN | 中文</text>
+  
+  <!-- Stock Info Header -->
+  <rect x="20" y="80" width="1160" height="80" rx="8" fill="#1a1f2e"/>
+  <text x="40" y="110" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#ccd6f6">AAPL - 苹果公司</text>
+  <text x="40" y="135" font-family="Arial, sans-serif" font-size="14" fill="#8892b0">NASDAQ: AAPL</text>
+  
+  <text x="400" y="110" font-family="Arial, sans-serif" font-size="32" font-weight="bold" fill="#00d4aa">$175.43</text>
+  <text x="400" y="135" font-family="Arial, sans-serif" font-size="16" fill="#00d4aa">+2.34 (+1.35%)</text>
+  
+  <text x="600" y="105" font-family="Arial, sans-serif" font-size="12" fill="#8892b0">开盘: $173.20</text>
+  <text x="600" y="125" font-family="Arial, sans-serif" font-size="12" fill="#8892b0">最高: $176.80</text>
+  <text x="600" y="145" font-family="Arial, sans-serif" font-size="12" fill="#8892b0">最低: $172.90</text>
+  
+  <text x="750" y="105" font-family="Arial, sans-serif" font-size="12" fill="#8892b0">成交量: 45.2M</text>
+  <text x="750" y="125" font-family="Arial, sans-serif" font-size="12" fill="#8892b0">市值: $2.75T</text>
+  <text x="750" y="145" font-family="Arial, sans-serif" font-size="12" fill="#8892b0">P/E: 28.5</text>
+  
+  <!-- Main Chart Area -->
+  <rect x="20" y="180" width="800" height="400" rx="8" fill="#1a1f2e" stroke="#2d3748" stroke-width="1"/>
+  <text x="35" y="205" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#ccd6f6">价格走势图</text>
+  
+  <!-- Time frame buttons -->
+  <rect x="650" y="185" width="40" height="25" rx="4" fill="#00d4aa" opacity="0.2"/>
+  <text x="665" y="202" font-family="Arial, sans-serif" font-size="12" fill="#00d4aa">1D</text>
+  <text x="700" y="202" font-family="Arial, sans-serif" font-size="12" fill="#8892b0">5D</text>
+  <text x="725" y="202" font-family="Arial, sans-serif" font-size="12" fill="#8892b0">1M</text>
+  <text x="750" y="202" font-family="Arial, sans-serif" font-size="12" fill="#8892b0">3M</text>
+  <text x="775" y="202" font-family="Arial, sans-serif" font-size="12" fill="#8892b0">1Y</text>
+  
+  <!-- Candlestick Chart -->
+  <g transform="translate(40, 220)">
+    <!-- Grid -->
+    <g stroke="#2d3748" stroke-width="0.5" opacity="0.3">
+      <line x1="0" y1="0" x2="760" y2="0"/>
+      <line x1="0" y1="70" x2="760" y2="70"/>
+      <line x1="0" y1="140" x2="760" y2="140"/>
+      <line x1="0" y1="210" x2="760" y2="210"/>
+      <line x1="0" y1="280" x2="760" y2="280"/>
+      <line x1="0" y1="350" x2="760" y2="350"/>
+    </g>
+    
+    <!-- Candlesticks -->
+    <g>
+      <!-- Green candles -->
+      <rect x="50" y="100" width="8" height="60" fill="#00d4aa"/>
+      <line x1="54" y1="80" x2="54" y2="180" stroke="#00d4aa" stroke-width="1"/>
+      
+      <rect x="100" y="80" width="8" height="80" fill="#00d4aa"/>
+      <line x1="104" y1="60" x2="104" y2="180" stroke="#00d4aa" stroke-width="1"/>
+      
+      <rect x="200" y="90" width="8" height="70" fill="#00d4aa"/>
+      <line x1="204" y1="70" x2="204" y2="180" stroke="#00d4aa" stroke-width="1"/>
+      
+      <!-- Red candles -->
+      <rect x="150" y="120" width="8" height="50" fill="#ff6b6b"/>
+      <line x1="154" y1="100" x2="154" y2="190" stroke="#ff6b6b" stroke-width="1"/>
+      
+      <rect x="250" y="110" width="8" height="60" fill="#ff6b6b"/>
+      <line x1="254" y1="90" x2="254" y2="190" stroke="#ff6b6b" stroke-width="1"/>
+      
+      <!-- More candles -->
+      <rect x="300" y="95" width="8" height="65" fill="#00d4aa"/>
+      <line x1="304" y1="75" x2="304" y2="180" stroke="#00d4aa" stroke-width="1"/>
+      
+      <rect x="350" y="85" width="8" height="75" fill="#00d4aa"/>
+      <line x1="354" y1="65" x2="354" y2="180" stroke="#00d4aa" stroke-width="1"/>
+      
+      <rect x="400" y="105" width="8" height="55" fill="#ff6b6b"/>
+      <line x1="404" y1="85" x2="404" y2="180" stroke="#ff6b6b" stroke-width="1"/>
+      
+      <rect x="450" y="75" width="8" height="85" fill="#00d4aa"/>
+      <line x1="454" y1="55" x2="454" y2="180" stroke="#00d4aa" stroke-width="1"/>
+      
+      <rect x="500" y="70" width="8" height="90" fill="#00d4aa"/>
+      <line x1="504" y1="50" x2="504" y2="180" stroke="#00d4aa" stroke-width="1"/>
+    </g>
+    
+    <!-- Moving averages -->
+    <polyline points="0,120 50,115 100,110 150,125 200,120 250,130 300,125 350,115 400,120 450,110 500,105 550,100 600,95 650,90 700,85 750,80" 
+              fill="none" stroke="#ffd93d" stroke-width="2" opacity="0.8"/>
+    <polyline points="0,140 50,135 100,130 150,145 200,140 250,150 300,145 350,135 400,140 450,130 500,125 550,120 600,115 650,110 700,105 750,100" 
+              fill="none" stroke="#4ecdc4" stroke-width="2" opacity="0.8"/>
+  </g>
+  
+  <!-- Volume Chart -->
+  <rect x="40" y="480" width="760" height="80" fill="none" stroke="#2d3748" stroke-width="1"/>
+  <text x="45" y="500" font-family="Arial, sans-serif" font-size="12" fill="#8892b0">成交量</text>
+  <g transform="translate(40, 520)">
+    <rect x="50" y="20" width="8" height="30" fill="#00d4aa" opacity="0.6"/>
+    <rect x="100" y="10" width="8" height="40" fill="#00d4aa" opacity="0.6"/>
+    <rect x="150" y="25" width="8" height="25" fill="#ff6b6b" opacity="0.6"/>
+    <rect x="200" y="15" width="8" height="35" fill="#00d4aa" opacity="0.6"/>
+    <rect x="250" y="30" width="8" height="20" fill="#ff6b6b" opacity="0.6"/>
+    <rect x="300" y="20" width="8" height="30" fill="#00d4aa" opacity="0.6"/>
+    <rect x="350" y="10" width="8" height="40" fill="#00d4aa" opacity="0.6"/>
+    <rect x="400" y="25" width="8" height="25" fill="#ff6b6b" opacity="0.6"/>
+    <rect x="450" y="5" width="8" height="45" fill="#00d4aa" opacity="0.6"/>
+    <rect x="500" y="0" width="8" height="50" fill="#00d4aa" opacity="0.6"/>
+  </g>
+  
+  <!-- Technical Indicators Panel -->
+  <rect x="840" y="180" width="340" height="400" rx="8" fill="#1a1f2e" stroke="#2d3748" stroke-width="1"/>
+  <text x="855" y="205" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#ccd6f6">技术指标</text>
+  
+  <!-- RSI -->
+  <text x="860" y="235" font-family="Arial, sans-serif" font-size="14" fill="#8892b0">RSI (14)</text>
+  <text x="1100" y="235" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#00d4aa">67.8</text>
+  <rect x="860" y="245" width="200" height="8" rx="4" fill="#2d3748"/>
+  <rect x="860" y="245" width="135" height="8" rx="4" fill="#00d4aa"/>
+  
+  <!-- MACD -->
+  <text x="860" y="275" font-family="Arial, sans-serif" font-size="14" fill="#8892b0">MACD</text>
+  <text x="1100" y="275" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#00d4aa">1.23</text>
+  <text x="860" y="295" font-family="Arial, sans-serif" font-size="12" fill="#8892b0">信号线: 0.98</text>
+  
+  <!-- Bollinger Bands -->
+  <text x="860" y="325" font-family="Arial, sans-serif" font-size="14" fill="#8892b0">布林带</text>
+  <text x="860" y="345" font-family="Arial, sans-serif" font-size="12" fill="#8892b0">上轨: $178.50</text>
+  <text x="860" y="365" font-family="Arial, sans-serif" font-size="12" fill="#8892b0">中轨: $175.20</text>
+  <text x="860" y="385" font-family="Arial, sans-serif" font-size="12" fill="#8892b0">下轨: $171.90</text>
+  
+  <!-- Support/Resistance -->
+  <text x="860" y="415" font-family="Arial, sans-serif" font-size="14" fill="#8892b0">支撑/阻力</text>
+  <text x="860" y="435" font-family="Arial, sans-serif" font-size="12" fill="#ff6b6b">阻力: $177.80</text>
+  <text x="860" y="455" font-family="Arial, sans-serif" font-size="12" fill="#00d4aa">支撑: $172.50</text>
+  
+  <!-- Volume Analysis -->
+  <text x="860" y="485" font-family="Arial, sans-serif" font-size="14" fill="#8892b0">成交量分析</text>
+  <text x="860" y="505" font-family="Arial, sans-serif" font-size="12" fill="#ffd93d">异常放量 +23%</text>
+  
+  <!-- AI Sentiment -->
+  <text x="860" y="535" font-family="Arial, sans-serif" font-size="14" fill="#8892b0">AI情绪分析</text>
+  <rect x="860" y="545" width="80" height="20" rx="10" fill="#00d4aa" opacity="0.2"/>
+  <text x="890" y="558" font-family="Arial, sans-serif" font-size="12" fill="#00d4aa">看涨 75%</text>
+  
+  <!-- News & Events -->
+  <rect x="20" y="600" width="1160" height="180" rx="8" fill="#1a1f2e" stroke="#2d3748" stroke-width="1"/>
+  <text x="35" y="625" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#ccd6f6">相关新闻与事件</text>
+  
+  <rect x="40" y="640" width="1120" height="30" rx="4" fill="#0f1419"/>
+  <circle cx="55" cy="655" r="4" fill="#00d4aa"/>
+  <text x="70" y="660" font-family="Arial, sans-serif" font-size="12" fill="#ccd6f6">苹果公司发布Q4财报，营收超预期</text>
+  <text x="1100" y="660" font-family="Arial, sans-serif" font-size="12" fill="#8892b0">2小时前</text>
+  
+  <rect x="40" y="680" width="1120" height="30" rx="4" fill="#0f1419"/>
+  <circle cx="55" cy="695" r="4" fill="#ffd93d"/>
+  <text x="70" y="700" font-family="Arial, sans-serif" font-size="12" fill="#ccd6f6">分析师上调AAPL目标价至$185</text>
+  <text x="1100" y="700" font-family="Arial, sans-serif" font-size="12" fill="#8892b0">4小时前</text>
+  
+  <rect x="40" y="720" width="1120" height="30" rx="4" fill="#0f1419"/>
+  <circle cx="55" cy="735" r="4" fill="#4ecdc4"/>
+  <text x="70" y="740" font-family="Arial, sans-serif" font-size="12" fill="#ccd6f6">iPhone 15销量数据公布，表现强劲</text>
+  <text x="1100" y="740" font-family="Arial, sans-serif" font-size="12" fill="#8892b0">1天前</text>
+</svg>

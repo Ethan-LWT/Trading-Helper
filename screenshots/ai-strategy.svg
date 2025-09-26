@@ -1,0 +1,171 @@
+<svg width="1200" height="800" viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="1200" height="800" fill="#0f1419"/>
+  
+  <!-- Header -->
+  <rect x="0" y="0" width="1200" height="60" fill="#1a1f2e"/>
+  <text x="20" y="35" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="#00d4aa">🚀 Trading-Helper - AI策略生成</text>
+  <text x="1050" y="35" font-family="Arial, sans-serif" font-size="14" fill="#8892b0">EN | 中文</text>
+  
+  <!-- Main Content Area -->
+  <rect x="20" y="80" width="760" height="700" rx="8" fill="#1a1f2e" stroke="#2d3748" stroke-width="1"/>
+  
+  <!-- Strategy Input Section -->
+  <text x="40" y="110" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#ccd6f6">🤖 AI策略生成器</text>
+  
+  <!-- Market Selection -->
+  <text x="40" y="140" font-family="Arial, sans-serif" font-size="14" fill="#8892b0">选择市场</text>
+  <rect x="40" y="150" width="200" height="35" rx="6" fill="#0f1419" stroke="#2d3748" stroke-width="1"/>
+  <text x="50" y="172" font-family="Arial, sans-serif" font-size="14" fill="#ccd6f6">美股市场 ▼</text>
+  
+  <!-- Risk Level -->
+  <text x="260" y="140" font-family="Arial, sans-serif" font-size="14" fill="#8892b0">风险等级</text>
+  <rect x="260" y="150" width="150" height="35" rx="6" fill="#0f1419" stroke="#2d3748" stroke-width="1"/>
+  <text x="270" y="172" font-family="Arial, sans-serif" font-size="14" fill="#ccd6f6">中等风险 ▼</text>
+  
+  <!-- Investment Amount -->
+  <text x="430" y="140" font-family="Arial, sans-serif" font-size="14" fill="#8892b0">投资金额</text>
+  <rect x="430" y="150" width="150" height="35" rx="6" fill="#0f1419" stroke="#2d3748" stroke-width="1"/>
+  <text x="440" y="172" font-family="Arial, sans-serif" font-size="14" fill="#ccd6f6">$10,000</text>
+  
+  <!-- Time Horizon -->
+  <text x="600" y="140" font-family="Arial, sans-serif" font-size="14" fill="#8892b0">投资期限</text>
+  <rect x="600" y="150" width="150" height="35" rx="6" fill="#0f1419" stroke="#2d3748" stroke-width="1"/>
+  <text x="610" y="172" font-family="Arial, sans-serif" font-size="14" fill="#ccd6f6">3-6个月 ▼</text>
+  
+  <!-- Strategy Preferences -->
+  <text x="40" y="220" font-family="Arial, sans-serif" font-size="14" fill="#8892b0">策略偏好</text>
+  <rect x="40" y="230" width="120" height="30" rx="15" fill="#00d4aa" opacity="0.2" stroke="#00d4aa" stroke-width="1"/>
+  <text x="85" y="250" font-family="Arial, sans-serif" font-size="12" fill="#00d4aa">价值投资</text>
+  
+  <rect x="170" y="230" width="120" height="30" rx="15" fill="none" stroke="#2d3748" stroke-width="1"/>
+  <text x="215" y="250" font-family="Arial, sans-serif" font-size="12" fill="#8892b0">成长投资</text>
+  
+  <rect x="300" y="230" width="120" height="30" rx="15" fill="#ffd93d" opacity="0.2" stroke="#ffd93d" stroke-width="1"/>
+  <text x="345" y="250" font-family="Arial, sans-serif" font-size="12" fill="#ffd93d">技术分析</text>
+  
+  <rect x="430" y="230" width="120" height="30" rx="15" fill="none" stroke="#2d3748" stroke-width="1"/>
+  <text x="475" y="250" font-family="Arial, sans-serif" font-size="12" fill="#8892b0">量化交易</text>
+  
+  <!-- Generate Button -->
+  <rect x="40" y="280" width="200" height="45" rx="8" fill="#00d4aa"/>
+  <text x="120" y="308" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#0f1419">🎯 生成策略</text>
+  
+  <!-- AI Analysis Section -->
+  <rect x="40" y="350" width="720" height="200" rx="8" fill="#0f1419" stroke="#2d3748" stroke-width="1"/>
+  <text x="55" y="375" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#ccd6f6">🧠 AI分析结果</text>
+  
+  <!-- Market Analysis -->
+  <text x="55" y="400" font-family="Arial, sans-serif" font-size="14" fill="#8892b0">市场环境分析:</text>
+  <text x="55" y="420" font-family="Arial, sans-serif" font-size="12" fill="#ccd6f6">• 当前市场处于震荡上升趋势，科技股表现强劲</text>
+  <text x="55" y="440" font-family="Arial, sans-serif" font-size="12" fill="#ccd6f6">• 美联储政策预期稳定，流动性充裕</text>
+  <text x="55" y="460" font-family="Arial, sans-serif" font-size="12" fill="#ccd6f6">• 建议关注AI、清洁能源、生物科技板块</text>
+  
+  <!-- Risk Assessment -->
+  <text x="55" y="490" font-family="Arial, sans-serif" font-size="14" fill="#8892b0">风险评估:</text>
+  <rect x="55" y="500" width="200" height="8" rx="4" fill="#2d3748"/>
+  <rect x="55" y="500" width="120" height="8" rx="4" fill="#ffd93d"/>
+  <text x="270" y="508" font-family="Arial, sans-serif" font-size="12" fill="#ffd93d">中等风险 (60%)</text>
+  
+  <text x="55" y="530" font-family="Arial, sans-serif" font-size="12" fill="#ccd6f6">预期年化收益: 12-18%  |  最大回撤: 8-12%</text>
+  
+  <!-- Generated Strategy Section -->
+  <rect x="40" y="570" width="720" height="200" rx="8" fill="#0f1419" stroke="#2d3748" stroke-width="1"/>
+  <text x="55" y="595" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#ccd6f6">📊 推荐投资组合</text>
+  
+  <!-- Portfolio Allocation -->
+  <g transform="translate(55, 610)">
+    <!-- Pie Chart -->
+    <circle cx="80" cy="80" r="60" fill="none" stroke="#2d3748" stroke-width="2"/>
+    
+    <!-- Sectors -->
+    <path d="M 80 20 A 60 60 0 0 1 130 50 L 80 80 Z" fill="#00d4aa"/>
+    <path d="M 130 50 A 60 60 0 0 1 130 110 L 80 80 Z" fill="#4ecdc4"/>
+    <path d="M 130 110 A 60 60 0 0 1 80 140 L 80 80 Z" fill="#ffd93d"/>
+    <path d="M 80 140 A 60 60 0 0 1 30 110 L 80 80 Z" fill="#ff6b6b"/>
+    <path d="M 30 110 A 60 60 0 0 1 30 50 L 80 80 Z" fill="#a78bfa"/>
+    <path d="M 30 50 A 60 60 0 0 1 80 20 L 80 80 Z" fill="#f472b6"/>
+    
+    <!-- Legend -->
+    <rect x="180" y="20" width="12" height="12" fill="#00d4aa"/>
+    <text x="200" y="32" font-family="Arial, sans-serif" font-size="12" fill="#ccd6f6">科技股 (30%)</text>
+    
+    <rect x="180" y="40" width="12" height="12" fill="#4ecdc4"/>
+    <text x="200" y="52" font-family="Arial, sans-serif" font-size="12" fill="#ccd6f6">医疗保健 (20%)</text>
+    
+    <rect x="180" y="60" width="12" height="12" fill="#ffd93d"/>
+    <text x="200" y="72" font-family="Arial, sans-serif" font-size="12" fill="#ccd6f6">金融服务 (15%)</text>
+    
+    <rect x="180" y="80" width="12" height="12" fill="#ff6b6b"/>
+    <text x="200" y="92" font-family="Arial, sans-serif" font-size="12" fill="#ccd6f6">消费品 (15%)</text>
+    
+    <rect x="180" y="100" width="12" height="12" fill="#a78bfa"/>
+    <text x="200" y="112" font-family="Arial, sans-serif" font-size="12" fill="#ccd6f6">清洁能源 (10%)</text>
+    
+    <rect x="180" y="120" width="12" height="12" fill="#f472b6"/>
+    <text x="200" y="132" font-family="Arial, sans-serif" font-size="12" fill="#ccd6f6">现金储备 (10%)</text>
+    
+    <!-- Recommended Stocks -->
+    <text x="400" y="32" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#8892b0">推荐股票:</text>
+    <text x="400" y="52" font-family="Arial, sans-serif" font-size="12" fill="#00d4aa">• AAPL (苹果) - 8%</text>
+    <text x="400" y="72" font-family="Arial, sans-serif" font-size="12" fill="#00d4aa">• MSFT (微软) - 7%</text>
+    <text x="400" y="92" font-family="Arial, sans-serif" font-size="12" fill="#00d4aa">• NVDA (英伟达) - 6%</text>
+    <text x="400" y="112" font-family="Arial, sans-serif" font-size="12" fill="#4ecdc4">• JNJ (强生) - 5%</text>
+    <text x="400" y="132" font-family="Arial, sans-serif" font-size="12" fill="#4ecdc4">• PFE (辉瑞) - 4%</text>
+    <text x="400" y="152" font-family="Arial, sans-serif" font-size="12" fill="#8892b0">+ 其他15只精选股票</text>
+  </g>
+  
+  <!-- Right Panel - Strategy Details -->
+  <rect x="800" y="80" width="380" height="700" rx="8" fill="#1a1f2e" stroke="#2d3748" stroke-width="1"/>
+  <text x="820" y="110" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#ccd6f6">策略详情</text>
+  
+  <!-- Strategy Type -->
+  <rect x="820" y="130" width="340" height="60" rx="6" fill="#0f1419"/>
+  <text x="835" y="150" font-family="Arial, sans-serif" font-size="14" fill="#8892b0">策略类型</text>
+  <text x="835" y="170" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#00d4aa">智能价值成长组合</text>
+  
+  <!-- Performance Metrics -->
+  <text x="820" y="220" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#ccd6f6">预期表现</text>
+  
+  <rect x="820" y="240" width="340" height="40" rx="6" fill="#0f1419"/>
+  <text x="835" y="255" font-family="Arial, sans-serif" font-size="12" fill="#8892b0">预期年化收益</text>
+  <text x="1100" y="255" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#00d4aa">15.2%</text>
+  <text x="835" y="270" font-family="Arial, sans-serif" font-size="12" fill="#8892b0">夏普比率</text>
+  <text x="1100" y="270" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#00d4aa">1.35</text>
+  
+  <rect x="820" y="290" width="340" height="40" rx="6" fill="#0f1419"/>
+  <text x="835" y="305" font-family="Arial, sans-serif" font-size="12" fill="#8892b0">最大回撤</text>
+  <text x="1100" y="305" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#ff6b6b">-9.8%</text>
+  <text x="835" y="320" font-family="Arial, sans-serif" font-size="12" fill="#8892b0">胜率</text>
+  <text x="1100" y="320" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#00d4aa">68%</text>
+  
+  <!-- Rebalancing Schedule -->
+  <text x="820" y="360" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#ccd6f6">调仓计划</text>
+  
+  <rect x="820" y="380" width="340" height="80" rx="6" fill="#0f1419"/>
+  <text x="835" y="400" font-family="Arial, sans-serif" font-size="12" fill="#8892b0">• 每月第一个交易日进行组合评估</text>
+  <text x="835" y="420" font-family="Arial, sans-serif" font-size="12" fill="#8892b0">• 权重偏离超过5%时进行调仓</text>
+  <text x="835" y="440" font-family="Arial, sans-serif" font-size="12" fill="#8892b0">• 季度末进行全面组合优化</text>
+  
+  <!-- Risk Management -->
+  <text x="820" y="490" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#ccd6f6">风险管理</text>
+  
+  <rect x="820" y="510" width="340" height="100" rx="6" fill="#0f1419"/>
+  <text x="835" y="530" font-family="Arial, sans-serif" font-size="12" fill="#8892b0">• 单只股票权重不超过10%</text>
+  <text x="835" y="550" font-family="Arial, sans-serif" font-size="12" fill="#8892b0">• 设置止损线：-15%</text>
+  <text x="835" y="570" font-family="Arial, sans-serif" font-size="12" fill="#8892b0">• 动态对冲：VIX > 25时增加防御性资产</text>
+  <text x="835" y="590" font-family="Arial, sans-serif" font-size="12" fill="#8892b0">• 流动性管理：保持10%现金缓冲</text>
+  
+  <!-- Action Buttons -->
+  <rect x="820" y="640" width="160" height="40" rx="8" fill="#00d4aa"/>
+  <text x="885" y="665" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#0f1419">📥 保存策略</text>
+  
+  <rect x="1000" y="640" width="160" height="40" rx="8" fill="none" stroke="#00d4aa" stroke-width="2"/>
+  <text x="1060" y="665" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#00d4aa">🚀 开始投资</text>
+  
+  <!-- Backtesting Results -->
+  <text x="820" y="720" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#ccd6f6">回测结果</text>
+  
+  <rect x="820" y="740" width="340" height="30" rx="6" fill="#0f1419"/>
+  <text x="835" y="760" font-family="Arial, sans-serif" font-size="12" fill="#8892b0">过去3年回测收益: +47.8% (年化15.1%)</text>
+</svg>
