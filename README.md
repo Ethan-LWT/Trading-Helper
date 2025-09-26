@@ -52,7 +52,7 @@ A comprehensive AI-powered trading platform that combines multiple data sources,
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/Trading_AI.git
+   git clone https://github.com/Ethan-LWT/Trading-Helper.git
    cd Trading_AI
    ```
 
